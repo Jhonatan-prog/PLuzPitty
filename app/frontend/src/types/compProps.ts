@@ -12,6 +12,7 @@ type AuthComponentPropsType = {
     reference: string;
     title: string;
     children: ReactNode;
+    boxChildren?: ReactNode;
 }
 
 export type { GlobalPropsType, AuthComponentPropsType };
