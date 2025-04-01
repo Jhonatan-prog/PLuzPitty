@@ -3,6 +3,7 @@ const tailwindStyles = {
     flexBetween: "flex items-center justify-between",
     flexStart: "flex items-start justify-start flex-col",
     flexEnd: "flex items-end justify-end",
+    transformCenter: "absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2",
     gridCenter: "grid place-items-center",
     fullSize: "w-full h-full",
     textCenter: "text-center",

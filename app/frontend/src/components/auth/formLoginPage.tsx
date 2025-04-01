@@ -8,8 +8,8 @@ import { tailwindStyles as TSCSS} from "../../utils/utils.styles.tailwind";
 const styles = {
   form: `${TSCSS.flexStart} flex-col gap-2`,
   label: "text-2xl",
-  input: "w-80 h-12 bg-gray-300 my-1.5 outline-none rounded-[.625rem] px-2 focus:border-3 focus:border-gray-400 text-[1.257rem] placeholder:text-[1.257rem] placeholder:font-medium",
-  button: "transition duration-400 border-none bg-[#95D9DA] hover:bg-[#68c8ca] font-bold py-2 px-4 rounded w-full cursor-pointer",
+  input: "w-80 h-12 bg-gray-300 my-4 outline-none rounded-[.625rem] px-2 focus:border-3 focus:border-gray-400 text-[1.257rem] placeholder:text-[1.257rem] placeholder:font-medium",
+  button: "transition duration-400 text-gray-600 tracking-wide border-none bg-[#95D9DA] hover:bg-[#68c8ca] font-medium py-2 px-4 rounded w-full cursor-pointer",
 };
 
 const Checkbox = ({ 
@@ -23,7 +23,7 @@ const Checkbox = ({
   const [checked, setChecked] = useState(value);
 
   return (
-    <label className="my-8 flex items-center text-gray-600 text-lg font-medium">
+    <label className="my-5 flex items-center text-gray-600 text-lg font-medium">
       <input 
         className="mr-2" 
         type="checkbox" 
