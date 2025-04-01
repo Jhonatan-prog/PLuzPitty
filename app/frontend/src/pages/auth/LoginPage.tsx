@@ -1,5 +1,5 @@
 import AuthLayout  from '../../layouts/AuthLayout';
-import { FormLoginComponent as FLComponent } from '../../components/auth/formLoginPage';
+import { LoginFormComponent as LFComponent } from '../../components/auth/loginFormComponent';
 
 const boxStyle = {
   p: "text-[.965rem] text-gray-500 mb-2",
@@ -8,8 +8,8 @@ const boxStyle = {
 
 const LoginPage = () => {
   return (
-    <AuthLayout reference='login' title="Login"> 
-        <FLComponent />
+    <AuthLayout reference='login' title="Iniciar Sesion"> 
+        <LFComponent />
 
         <div className='flex flex-col mt-6'>
           <p className={boxStyle.p}>¿No tienes una cuenta? <a href="/register" className={boxStyle.a}>Registrarse</a></p>

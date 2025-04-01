@@ -40,7 +40,7 @@ const Checkbox = ({
   );
 };
 
-const FormLoginComponent = () => {
+const LoginFormComponent = () => {
   return (
     <form action="" method="post" className={`${TSCSS.flexStart}`}>
 
@@ -48,21 +48,21 @@ const FormLoginComponent = () => {
         type="email" 
         name="email"
         className={styles.input}
-        placeholder="Email"
+        placeholder="Correo"
         id="" />
       <input 
         type="password" 
         name="password"
         className={styles.input}
-        placeholder="Password"
+        placeholder="Contraseña"
         id="" />
 
       <Checkbox label="Recordar usuario" value={false} />
 
-      <button type="submit" className={styles.button}>Login</button>
+      <button type="submit" className={styles.button}>Ingresar</button>
   
     </form>
   );
 };
 
-export { FormLoginComponent };
+export { LoginFormComponent };
