@@ -1,5 +1,5 @@
-import AuthLayout  from '../layouts/AuthLayout';
-import { FormLoginComponent as FLComponent } from '../components/auth/formLoginPage';
+import AuthLayout  from '../../layouts/AuthLayout';
+import { FormLoginComponent as FLComponent } from '../../components/auth/formLoginPage';
 
 const boxStyle = {
   p: "text-[.965rem] text-gray-500 mb-2",
