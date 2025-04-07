@@ -14,6 +14,12 @@ const tailwindStyles = {
     transition: "transition duration-300 ease-in-out",
     buttonPrimary: "bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600",
     buttonSecondary: "bg-gray-500 text-white py-2 px-4 rounded hover:bg-gray-600",
+    auth: {
+        form: "flex items-start justify-start flex-col gap-2",
+        label: "text-2xl",
+        input: "w-full h-12 bg-gray-300 min-w-80 my-[.526em] outline-none rounded-[.625rem] px-2 focus:border-3 focus:border-gray-400 text-[1.257rem] placeholder:text-[1.257rem] placeholder:font-medium",
+        button: "transition duration-400 min-w-80 mt-4 my-2 text-gray-600 tracking-wide border-none bg-[#95D9DA] text-[1.257rem] hover:bg-[#68c8ca] font-medium py-2 px-4 rounded w-full cursor-pointer",
+    }
 };
 
 export { tailwindStyles };

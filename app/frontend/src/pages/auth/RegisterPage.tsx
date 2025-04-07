@@ -1,13 +1,13 @@
 import AuthLayout from "../../layouts/AuthLayout";
-import { RegisterFormComponent as FRComponent } from "../../components/auth/registerFormComponent";
+import { RegisterFormComponent as FRComponent } from "../../components/auth/RegisterFormComponent";
 
 const RegisterPage = () => {
     return (
-        <AuthLayout title="Registro" reference="register">
+        <AuthLayout title="Crea una cuenta" reference="register">
             <FRComponent />
 
             <div className="flex flex-col mt-6">
-                <p className="text-[.965rem] text-gray-500 mb-2">¿Ya tienes una cuenta? <a href="/login" className="text-blue-500 hover:text-blue-700">Iniciar sesión</a></p>
+                <p className="text-[.965rem] text-gray-500">¿Ya tienes una cuenta? <a href="/login" className="text-blue-500 hover:text-blue-700">Iniciar sesión</a></p>
             </div>
         </AuthLayout>
     );

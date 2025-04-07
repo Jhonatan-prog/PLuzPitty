@@ -1,16 +1,12 @@
 // react
 import { useState, ChangeEventHandler } from "react";
 import { useFormStatus } from "react-dom";
+import { v4 as uuidv4 } from 'uuid';
 
 // styles
 import { tailwindStyles as TSCSS} from "../../utils/utils.styles.tailwind";
 
-const styles = {
-  form: `${TSCSS.flexStart} flex-col gap-2`,
-  label: "text-2xl",
-  input: "w-80 h-12 bg-gray-300 my-4 outline-none rounded-[.625rem] px-2 focus:border-3 focus:border-gray-400 text-[1.257rem] placeholder:text-[1.257rem] placeholder:font-medium",
-  button: "transition duration-400 text-gray-600 tracking-wide border-none bg-[#95D9DA] hover:bg-[#68c8ca] font-medium py-2 px-4 rounded w-full cursor-pointer",
-};
+const styles = TSCSS.auth;
 
 const Checkbox = ({ 
     label, value, onChange 
@@ -23,9 +19,9 @@ const Checkbox = ({
   const [checked, setChecked] = useState(value);
 
   return (
-    <label className="my-5 flex items-center text-gray-600 text-lg font-medium">
+    <label className="mt-3 flex items-center text-gray-600 text-lg font-medium">
       <input 
-        className="mr-2" 
+        className="mr-2 cursor-pointer" 
         type="checkbox" 
         checked={checked} 
         onChange={() => {
@@ -49,13 +45,13 @@ const LoginFormComponent = () => {
         name="email"
         className={styles.input}
         placeholder="Correo"
-        id="" />
+        id={uuidv4()} />
       <input 
         type="password" 
         name="password"
         className={styles.input}
         placeholder="Contraseña"
-        id="" />
+        id={uuidv4()} />
 
       <Checkbox label="Recordar usuario" value={false} />
 
