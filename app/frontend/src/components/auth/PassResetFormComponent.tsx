@@ -1,4 +1,4 @@
-import { tailwindStyles as TSCSS} from "../../utils/utils.styles.tailwind";
+import { tailwindStyles as TSCSS} from "../../styles/styles.tailwind";
 
 const styles = TSCSS.auth;
 

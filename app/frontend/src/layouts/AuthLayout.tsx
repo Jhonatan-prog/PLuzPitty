@@ -2,7 +2,7 @@
 import { memo, useState, useEffect, Fragment } from "react";
 // styles, types
 import { AuthComponentPropsType } from "../types/compProps";
-import { tailwindStyles as TSCSS} from "../utils/utils.styles.tailwind";
+import { tailwindStyles as TSCSS} from "../styles/styles.tailwind";
 // images
 import Logo from "../assets/icon-rmBg.png";
 import BButton from "../assets/back-button.svg";

@@ -4,7 +4,7 @@ import { useFormStatus } from "react-dom";
 import { v4 as uuidv4 } from 'uuid';
 
 // styles
-import { tailwindStyles as TSCSS} from "../../utils/utils.styles.tailwind";
+import { tailwindStyles as TSCSS} from "../../styles/styles.tailwind";
 
 const styles = TSCSS.auth;
 

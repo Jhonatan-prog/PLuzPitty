@@ -15,4 +15,11 @@ type AuthComponentPropsType = {
     boxChildren?: ReactNode;
 }
 
-export type { GlobalPropsType, AuthComponentPropsType };
+type LabelProps = {
+    reference: string, 
+    message: string, 
+    isValid: boolean, 
+    userInput: string
+}
+
+export type { GlobalPropsType, AuthComponentPropsType, LabelProps };
