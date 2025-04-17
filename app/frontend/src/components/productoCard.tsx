@@ -1,6 +1,6 @@
 // src/components/ProductoCard.tsx
 import React from 'react';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card, CardContent } from '../components/ui(userInterface)/card';
 import { Producto } from '../types/products';
 import { formatearPrecio } from '../utils/formatearPrecio';
 
