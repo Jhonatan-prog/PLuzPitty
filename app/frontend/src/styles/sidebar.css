@@ -1,0 +1,43 @@
+.sidebar {
+    width: 220px;
+    background-color: #e6dcee;
+    padding: 1rem;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+  
+  .perfil {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+  }
+  
+  .avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+  }
+  
+  .nombre {
+    font-weight: bold;
+    color: #6a1b9a;
+  }
+  
+  .rol {
+    font-size: 0.8rem;
+    color: #555;
+  }
+  
+  .menu {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .menu li {
+    padding: 0.5rem 0;
+    cursor: pointer;
+  }
+  
+  
