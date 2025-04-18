@@ -1,6 +1,6 @@
 // Routes
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import ProductosPage from "./pages/productosPage";
+import Sidebar from "../src/pages/sidebar";
 
 const AppRoutes = () => {
     return (
@@ -10,7 +10,7 @@ const AppRoutes = () => {
                 <Route path="/about" element={<div>About Page</div>} />
                 <Route path="/contact" element={<div>Contact Page</div>} />
                 <Route path="*" element={<div>404 Not Found</div>} />
-                <Route path="/inicio" element={<ProductosPage />} />
+                <Route path="/inicio" element={<Sidebar />} />
             </Routes>
         </Router>
     );
