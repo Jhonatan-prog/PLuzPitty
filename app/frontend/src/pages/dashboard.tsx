@@ -4,13 +4,29 @@ import ProductCard from "../components/productoCard";
 import lonchera from "../assets/lonchera.png";
 import cuaderno from "../assets/cuaderno.png";
 import lienzo from "../assets/lienzo.png";
-import cartuchera from "../assets/cartuchera.png"
+import cartuchera from "../assets/cartuchera.png";
+import BoligrafoKiut from "../assets/BoligrafosKiut.jpeg";
+import BoligrafoNorma from "../assets/BoligrafoGelNegro.jpeg";
+import PlaneadorSem from "../assets/PlaneadorSemanal.jpeg";
+import Cuaderno7M from "../assets/Cuaderno7M.jpeg";
+import Block from "../assets/Block.jpeg";
+import MarcadoBorr from "../assets/MarcadoresBorrables.jpeg";
+import FolderArgoll from "../assets/FolderArgollado.jpeg";
+import ColoresGig from "../assets/ColoresJumbo.jpeg";
 
 const products = [
   { imgSrc: lonchera, name: "Lonchera", price: "30.000" },
   { imgSrc: cuaderno, name: "Cuaderno cuadriculado", price: "20.000" },
   { imgSrc: lienzo, name: "Kit de pintura", price: "50.000" },
   { imgSrc: cartuchera, name: "Estuche colores", price: "25.000" },
+  { imgSrc: BoligrafoKiut, name: "Boligrafos Kiut Morados X10 Und", price: "17.000" },
+  { imgSrc: BoligrafoNorma, name: "Boligrafos Norma Negro X12", price: "15.000" },
+  { imgSrc: PlaneadorSem, name: "Planeador Semanal Kiut 2025 ", price: "20.000" },
+  { imgSrc: Cuaderno7M, name: "Cuaderno argollado tapa dura grande multimaterias 7M cuadriculado Jean Book tela real - Azul sky", price: "63.000" },
+  { imgSrc: Block, name: "Block oficio línea corriente Jean Book - Denim pines cheer", price: "6.732" },
+  { imgSrc: MarcadoBorr, name: "Marcadores Borrables Norma X10 und Negro", price: "25.000" },
+  { imgSrc: FolderArgoll, name: "Folder argollado Pvc Academico Negro Ondas", price: "18.000" },
+  { imgSrc: ColoresGig, name: "Caja de Colores Norma Gigantes Triangulares x 12 Und + Sacapunta", price: "32.000" }
 ];
 
 export default function Dashboard() {

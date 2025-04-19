@@ -8,6 +8,7 @@ import estadisticas from "../assets/estadisticas.png";
 import domicilios from "../assets/domicilios.png";
 import devoluciones from "../assets/devoluciones.png";
 import cerrarSesion from "../assets/cerrarSesion.png";
+import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 
 const menuItems = [
   { label: "Productos", icon: productos },
@@ -26,27 +27,31 @@ const Sidebar = () => {
     <div className={`bg-[#e5dff3] h-screen p-4 border-r-2 border-purple-700 ${isOpen ? "w-64" : "w-18"} fixed top-0 left-0 z-60 transition-all duration-300 relative`}>
       <div className="flex items-center justify-between mb-6 pb-2">
         {isOpen && (
-          <div className="flex items-center gap-2">
-            <img src={perfil} alt="Perfil" className="w-25 h-25 rounded-full" />
+          <div className="flex items-center gap-2 mt-5">
+            <img src={perfil} alt="Perfil" className="w-25 h-28 rounded-full" />
             <div>
-              <p className="text-xs text-gray-500">Perfil</p>
+              <p className="text-xm text-gray-500">Perfil</p>
               <p className="font-bold text-purple-800 text-sm">Yuliana Andrea</p>
-              <p className="text-xs">Administradora</p>
+              <p className="text-xm">Administradora</p>
             </div>
           </div>
         )}
-        <button onClick={() => setIsOpen(!isOpen)} className="text-xs p-1 ml-auto">
-          {isOpen ? "«" : "»"}
-        </button>
       </div>
 
-      <ul className="flex flex-col gap-4">
+        <button
+          onClick={() => setIsOpen(!isOpen)}
+          className="absolute top-4 right-2 bg-transparent text-purple-700 text-xl shadow-lg shadow-purple-400/60 p-2 z-50 hover:bg-purple-200 transition"
+        >
+          {isOpen ? <FaChevronLeft /> : <FaChevronRight />}
+        </button>
+
+      <ul className="flex flex-col gap-4 mt-10">
         {menuItems.map((item, index) => (
           <li
             key={index}
-            className="flex items-center gap-2 text-sm cursor-pointer hover:text-purple-700"
+            className="flex items-center gap-2 text-sm cursor-pointer hover:text-purple-700 py-4"
           >
-            <img src={item.icon} alt={item.label} className="w-6 h-6" />
+            <img src={item.icon} alt={item.label} className="w-8 h-8 justify-center" />
             {isOpen && <span>{item.label}</span>}
           </li>
         ))}
