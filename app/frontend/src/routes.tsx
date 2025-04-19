@@ -1,6 +1,7 @@
 // Routes
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Sidebar from "../src/pages/sidebar";
+import Header from "../src/pages/header";
+//import Sidebar from "../src/pages/sidebar";
 
 const AppRoutes = () => {
     return (
@@ -10,7 +11,7 @@ const AppRoutes = () => {
                 <Route path="/about" element={<div>About Page</div>} />
                 <Route path="/contact" element={<div>Contact Page</div>} />
                 <Route path="*" element={<div>404 Not Found</div>} />
-                <Route path="/inicio" element={<Sidebar />} />
+                <Route path="/inicio" element={<Header />} />
             </Routes>
         </Router>
     );
