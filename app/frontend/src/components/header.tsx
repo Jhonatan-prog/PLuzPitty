@@ -32,7 +32,7 @@ const Header = () => {
   };
 
   return (
-    <header className="w-full bg-gray-200 px-6 py-4 flex justify-between items-center fixed top-0 left-0 z-50 shadow-md">
+    <header className="w-full bg-gray-200 px-30 py-4 flex justify-between items-center fixed top-0 left-0 z-50 shadow-md">
       {/* Logo */}
       <img src={logo} alt="Logo Luz Pitty" className="h-15" />
 
