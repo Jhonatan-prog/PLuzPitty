@@ -1,20 +1,20 @@
-import Sidebar from "../components/sidebar";
-import Header from "../components/header";
-import ProductCard from "../components/productoCard";
-import lonchera from "../assets/lonchera.png";
-import cuaderno from "../assets/cuaderno.png";
-import lienzo from "../assets/lienzo.png";
-import cartuchera from "../assets/cartuchera.png";
-import BoligrafoKiut from "../assets/BoligrafosKiut.jpeg";
-import BoligrafoNorma from "../assets/BoligrafoGelNegro.jpeg";
-import PlaneadorSem from "../assets/PlaneadorSemanal.jpeg";
-import Cuaderno7M from "../assets/Cuaderno7M.jpeg";
-import Block from "../assets/Block.jpeg";
-import MarcadoBorr from "../assets/MarcadoresBorrables.jpeg";
-import FolderArgoll from "../assets/FolderArgollado.jpeg";
-import ColoresGig from "../assets/ColoresJumbo.jpeg";
+import Sidebar from "../../components/pagInicio/sidebar";
+import Header from "../../components/pagInicio/header";
+import ProductCard from "../../components/pagInicio/productoCard";
+import lonchera from "../../assets/lonchera.png";
+import cuaderno from "../../assets/cuaderno.png";
+import lienzo from "../../assets/lienzo.png";
+import cartuchera from "../../assets/cartuchera.png";
+import BoligrafoKiut from "../../assets/BoligrafosKiut.jpeg";
+import BoligrafoNorma from "../../assets/BoligrafoGelNegro.jpeg";
+import PlaneadorSem from "../../assets/PlaneadorSemanal.jpeg";
+import Cuaderno7M from "../../assets/Cuaderno7M.jpeg";
+import Block from "../../assets/Block.jpeg";
+import MarcadoBorr from "../../assets/MarcadoresBorrables.jpeg";
+import FolderArgoll from "../../assets/FolderArgollado.jpeg";
+import ColoresGig from "../../assets/ColoresJumbo.jpeg";
 
-const products = [
+const products = [//Lista de productos que vamos a mostrar
   { imgSrc: lonchera, name: "Lonchera", price: "30.000" },
   { imgSrc: cuaderno, name: "Cuaderno cuadriculado", price: "20.000" },
   { imgSrc: lienzo, name: "Kit de pintura", price: "50.000" },
@@ -40,9 +40,14 @@ export default function Dashboard() {
           Productos
         </h1>
         {/*Contenedor de productos */}
+        {/* Aquí vamos a colocar las tarjetas de productos */}
         <div className="flex justify-center mt-10">
+        {/* Grid o cuadricula para organizar las tarjetas */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-8">
+        {/* Recorremos cada producto de la lista y mostramos una tarjeta */} 
         {products.map((product, i) => (
+          // Creamos una tarjeta (ProductCard) para cada producto
+          // Usamos {...product} para pasar todos los datos como props
           <ProductCard key={i} {...product} />
         ))}
         </div>

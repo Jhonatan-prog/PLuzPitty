@@ -1,8 +1,6 @@
-// Routes
+
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-//import Header from "../src/pages/header";
-//import Sidebar from "../src/pages/sidebar";
-import ProductoCard from "../src/pages/dashboard";
+import ProductoCard from "../src/pages/pagInicio/dashboard";
 
 const AppRoutes = () => {
     return (
