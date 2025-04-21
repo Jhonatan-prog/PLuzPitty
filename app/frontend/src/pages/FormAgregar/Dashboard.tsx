@@ -8,7 +8,7 @@ export default function Dashboard() {
         <Sidebar />
         <main className="flex-1 bg-white p-6 overflow-auto">
           <Header />
-          {/*Contenedor de productos */}
+          {/*Formulario de productos */}
           <AgregarProducto />
         </main>
       </div>

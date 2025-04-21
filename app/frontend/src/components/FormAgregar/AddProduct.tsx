@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { ProductoFormValues } from "../../types/FormProductsProps";
 
 const AgregarProducto: React.FC = () => {
+  //valores iniciales que tendra el producto
   const valorInicial: ProductoFormValues = {
     codigo: "",
     nombre: "",
@@ -12,11 +13,14 @@ const AgregarProducto: React.FC = () => {
     valorCompra: 0,
     imagen: null,
   };
-
+  //guardamos la informacion que vamos escribiendo
   const [formData, setFormData] = useState<ProductoFormValues>(valorInicial);
+  //Guardamos la imagen para verla, para luego subirla
   const [vistaPrevia, setVistaPrevia] = useState<string | null>(null);
+  //Guardamos los errores
   const [errores, setErrores] = useState<{ [key: string]: string }>({});
 
+  //formateara los precios a pesos colombianos COP
   const formatter = new Intl.NumberFormat("es-CO", {
     style: "currency",
     currency: "COP",
@@ -29,12 +33,14 @@ const AgregarProducto: React.FC = () => {
     setErrores({});
   };
 
+  //Revisamos cada vez que se cambie algo en los campos del formulario
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, files } = e.target;
 
     const sinEspeciales = /^[a-zA-Z0-9\s\-\/.]*$/;
     const soloLetras = /^[a-zA-Z\s\-]*$/;
 
+    //guardamos la imagen y se muestra la vista previa
     if (type === "file" && files) {
       const file = files[0];
       setFormData((prev) => ({ ...prev, imagen: file }));
@@ -43,14 +49,17 @@ const AgregarProducto: React.FC = () => {
       return;
     }
 
+    //evita numeros y caracteres especiales
     if (!sinEspeciales.test(value)) return;
     if (name === "nombre" && !soloLetras.test(value)) return;
     if (name === "cantidad" && value.includes(".")) return; // evita decimales
 
+    //Cuando tenemos el mensaje de campo requerido, y empezamos a copiar en dicho campo, se quita el mensaje de error
     if (errores[name]) {
       setErrores((prev) => ({ ...prev, [name]: "" }));
     }
 
+    //guardar temporalmente dentro del formulario, o sea, actualiza la información que se está escribiendo
     setFormData((prev) => ({
       ...prev,
       [name]: type === "number" ? Number(value) : value,
@@ -72,8 +81,9 @@ const AgregarProducto: React.FC = () => {
     return Object.keys(nuevosErrores).length === 0;
   };
 
+  //Cuando le damos al boton agregar
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+    e.preventDefault();//ayuda a que no se recargue la pag
     if (validarCampos()) {
       console.log("Formulario válido:", formData);
       limpiarFormulario();
@@ -84,7 +94,11 @@ const AgregarProducto: React.FC = () => {
     <div className="min-h-screen flex items-center justify-center bg-white p-25">
       <div className="bg-white p-8 rounded-xl shadow-xl w-full max-w-4xl border border-gray-200 ">
         <h1 className="text-center text-4xl font-bold text-purple-400 mb-8">Agregar producto</h1>
+
+         {/* Este es el formulario donde se escriben los datos */}
         <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+          {/* Aquí va la imagen */}
           <div className="flex flex-col items-center border border-purple-400 bg-gray-100 rounded-lg p-4 h-48 justify-center">
             <label htmlFor="imagen" className="cursor-pointer text-gray-500 text-sm text-center">
               {vistaPrevia ? (
@@ -133,13 +147,14 @@ const AgregarProducto: React.FC = () => {
 
 export default AgregarProducto;
 
+//Es un modelo donde podemos crear varias etiquetas de campo pero con diferentes valores
 const Campo = ({
-  label,
-  name,
-  type = "text",
-  value,
-  onChange,
-  error,
+  label,    // El texto que se muestra arriba del campo (ej. "Nombre")
+  name,     // El nombre del campo (ej. "nombre", "cantidad")
+  type = "text",    // Si no le dicen qué tipo es, será "texto" por defecto
+  value,    // El valor actual del campo
+  onChange,   // Qué hacer cuando alguien escribe en el campo
+  error,    // Si hay un error (por ejemplo: campo vacío), lo muestra
 }: {
   label: string;
   name: string;
@@ -163,12 +178,12 @@ const Campo = ({
 );
 
 const CampoMoneda = ({
-  label,
-  name,
-  value,
-  onChange,
-  error,
-  formatter,
+  label,    // Texto que aparece arriba del campo (como "Valor unitario COP")
+  name,     // El nombre del campo (como "valorUnitario")
+  value,    // El número que está escrito dentro del campo
+  onChange, // Qué hacer cuando alguien cambia el valor
+  error,    // Si hay un error, lo muestra
+  formatter,  // Formateador que convierte el número a dinero (ej: $50.000)
 }: {
   label: string;
   name: string;
