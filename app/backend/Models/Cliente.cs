@@ -1,15 +1,31 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace app.backend.Models
 {
-    //Herencia: La clase Cliente hereda de la clase Usuario
-    public class Cliente : Usuario
+    public class Cliente
     {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int IdCliente { get; set; }
         
-       public List<Venta> HistorialCompras { get; set; } = new ();
+        [Required]
+        [StringLength(100)]
+        public string Nombre { get; set; }
+        
+        [Required]
+        [StringLength(15)]
+        public string Telefono { get; set; }
+        
+        [Required]
+        [StringLength(100)]
+        public string Dirección { get; set; }
+        
+        // Navigation properties
+        public virtual ICollection<Factura> Facturas { get; set; }
+        public virtual ICollection<Devolucion> Devoluciones { get; set; }
+        public virtual ICollection<HistorialDomicilio> HistorialesDomicilio { get; set; }
     }
 }

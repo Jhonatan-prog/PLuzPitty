@@ -1,31 +1,32 @@
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace app.backend.Models
 {
-    public class Transaccion
+    public class HistorialDomicilio
     {
         [Key]
-        [StringLength(100)]
-        public string CodigoTransaccion { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int IdHistorialDomicilio { get; set; }
         
         [Required]
         public DateTime Fecha { get; set; }
         
         [Required]
-        [StringLength(2)]
-        public string Estado { get; set; }
+        public int IdCliente { get; set; }
         
         [Required]
-        [Column(TypeName = "money")]
-        public decimal Subtotal { get; set; }
+        public int CcEmpleado { get; set; }
         
         [Required]
         [StringLength(100)]
         public string IdFactura { get; set; }
         
-        // Navigation property
+        // Navigation properties
         public virtual Factura Factura { get; set; }
+        public virtual Usuario Usuario { get; set; }
+        public virtual Cliente Cliente { get; set; }
     }
 }

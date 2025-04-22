@@ -1,32 +1,46 @@
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace app.backend.Models
 {
-    public class Producto 
+    public class Producto
     {
         [Key]
-        public int Id_Producto {get;set;}
-
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int CodigoProducto { get; set; }
+        
         [Required]
-        [StringLength(50)]
+        [StringLength(100)]
         public string Nombre { get; set; }
-
+        
+        public string Descripcion { get; set; }
+        
         [Required]
-        [StringLength(50)]
-        public string Descripcion {get;set;}
-
+        [Column(TypeName = "money")]
+        public decimal VlrUnitario { get; set; }
+        
         [Required]
-        [Column(TypeName = "decimal(10,2)")]
-        public decimal Precio_Unitario { get; set; }
+        [Column(TypeName = "money")]
+        public decimal VlrSinIva { get; set; }
+        
         [Required]
-        [StringLength(50)]
-        public string Categoria {get;set;}
-
+        [Column(TypeName = "money")]
+        public decimal VlrCompra { get; set; }
+        
+        [Required]
+        public int Stock { get; set; }
+        
+        [Required]
+        public DateTime FechaIngreso { get; set; }
+        
+        [Required]
+        [StringLength(255)]
+        public string Imagen { get; set; }=null!;
+        
+        //Propiedades de navegación
+        public virtual ICollection<FacturaProducto> FacturaProductos { get; set; } = new HashSet<FacturaProducto>();
+        public virtual ICollection<ProductoProveedor> ProductoProveedores { get; set; } = new HashSet<ProductoProveedor>();
+        public virtual ICollection<Inventario> Inventarios { get; set; } = new HashSet<Inventario>();
     }
 }

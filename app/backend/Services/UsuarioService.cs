@@ -1,137 +1,204 @@
-using System;
-using System.Collections.Generic;
-using app.backend.App_Data;
 using app.backend.Models;
-using System.Linq;
+using System.Data;
+using Microsoft.Data.SqlClient;
+using System.Data.Common;
 using BCrypt.Net;
-using Microsoft.EntityFrameworkCore;
 
 namespace app.backend.Services
 {
     public class UsuarioService
     {
-        private MiContextoDeDatos _context = new MiContextoDeDatos();
-        public Usuario usuario { get; set; }
+        private readonly ControlConexion _conexion;
 
-       
-        public string CrearUsuario()
+        public UsuarioService(ControlConexion conexion)
         {
-            try
-            {
-                if (string.IsNullOrWhiteSpace(usuario.Contraseña))
-                return "La contraseña no puede estar vacía";
-                
-                usuario.Contraseña = PasswordHelper.HashPassword(usuario.Contraseña);
-                _context.Usuarios.Add(usuario);
-                _context.SaveChanges();
-                return "Usuario creado exitosamente.";
-            }
-            catch (Exception ex)
-            {
-                return $"Error al crear usuario: {ex.Message}";
-            }
+            _conexion = conexion;
         }
 
-        public string ActualizarUsuario()
-        {
-            try
-            {
-                var usuarioExistente = Consultar(usuario.IdUsuario);
-                if (usuarioExistente == null)
-                return "El usuario no existe";
-
-                // Solo actualiza la contraseña si se proporcionó una nueva
-                if (!string.IsNullOrWhiteSpace(usuario.Contraseña) && 
-                    usuario.Contraseña != usuarioExistente.Contraseña)
-                {
-                    usuario.Contraseña = PasswordHelper.HashPassword(usuario.Contraseña);
-                }
-                else
-                {
-                    // Mantiene la contraseña existente
-                    usuario.Contraseña = usuarioExistente.Contraseña;
-                }
-
-                _context.Entry(usuarioExistente).State = EntityState.Detached;
-                _context.Usuarios.Update(usuario);
-                _context.SaveChanges();
-                return "Usuario actualizado correctamente";
-            }
-            catch (Exception ex)
-            {
-                return $"Error al actualizar usuario: {ex.Message}";
-            }
-        }
-
-        private bool Validar(int IdUsuario)
-        {
-            if(Consultar(IdUsuario) == null)
-            {
-                return false;
-            }
-            else
-            {
-                return true;
-            }
-        }
-
-        //Consultar un usuario por id
-        public Usuario Consultar(int IdUsuario)
-        {
-            return _context.Usuarios.FirstOrDefault(u => u.IdUsuario == IdUsuario);
-        }
-
-        //Eliminar Producto
-        public string Eliminar()
-        {
-            //Primero se consulta
-            try
-            {
-                Usuario product = Consultar(usuario.IdUsuario);
-                if(product == null)
-                {
-                    return "El Usuario no Existe";
-                }
-                //si el empleado existe se elimina
-                _context.Usuarios.Remove(usuario);
-                _context.SaveChanges();
-                return "Usuario Eliminado Correctamente";
-            }
-            catch (Exception ex)
-            {
-                return "Error al Eliminar Usuario" + ex.Message;
-            }
-
-           
-        }
-
-        //Eliminar Poducto X ID
-        public string EliminarXId(int IdUsuario)
-        {
-            try
-            {
-                Usuario usua = Consultar(IdUsuario);
-                if(usua == null)
-                {
-                    return "El Usuario no Existe";
-                }
-                //si el empleado existe se elimina
-                _context.Usuarios.Remove(usua);
-                _context.SaveChanges();
-                return "Usuario Eliminado Correctamente";
-            }
-            catch (Exception ex)
-            {
-                return "Error al Eliminar Usuario" + ex.Message + "-Inner " + ex.InnerException?.Message;
-            }
-        }
-         
-        //Listar Productos
         public List<Usuario> ConsultarTodos()
         {
-            return _context.Usuarios
-            //.OrderBy(p => p.Nombre)
-            .ToList();
+            var usuarios = new List<Usuario>();
+            _conexion.AbrirBd();
+
+            string consulta = "SELECT * FROM Usuario";
+            var tabla = _conexion.EjecutarConsultaSql(consulta, null);
+
+            foreach (DataRow fila in tabla.Rows)
+            {
+                usuarios.Add(new Usuario
+                {
+                    IdUsuario = Convert.ToInt32(fila["IdUsuario"]),
+                    NombreUsuario = fila["NombreUsuario"].ToString() ?? "",
+                    Contraseña = fila["Contraseña"].ToString() ?? "",
+                    Correo = fila["Correo"].ToString() ?? "",
+                    NombreRol = fila["NombreRol"].ToString() ?? "",
+                    Telefono = Convert.ToInt32(fila["Telefono"])
+                    // Las propiedades de navegación no se cargan aquí
+                });
+            }
+
+            _conexion.CerrarBd();
+            return usuarios;
+        }
+
+        public Usuario? ConsultarPorId(int id)
+        {
+            Usuario? usuario = null;
+            _conexion.AbrirBd();
+
+            string consulta = "SELECT * FROM Usuario WHERE IdUsuario = @IdUsuario";
+            var parametros = new DbParameter[]
+            {
+                _conexion.CreateParameter("@IdUsuario", id)
+            };
+
+            var tabla = _conexion.EjecutarConsultaSql(consulta, parametros);
+
+            if (tabla.Rows.Count > 0)
+            {
+                DataRow fila = tabla.Rows[0];
+                usuario = new Usuario
+                {
+                    IdUsuario = Convert.ToInt32(fila["IdUsuario"]),
+                    NombreUsuario = fila["NombreUsuario"].ToString() ?? "",
+                    Contraseña = fila["Contraseña"].ToString() ?? "",
+                    Correo = fila["Correo"].ToString() ?? "",
+                    NombreRol = fila["NombreRol"].ToString() ?? "",
+                    Telefono = Convert.ToInt32(fila["Telefono"])
+                };
+            }
+
+            _conexion.CerrarBd();
+            return usuario;
+        }
+
+        public Usuario? ConsultarPorCorreo(string correo)
+        {
+            Usuario? usuario = null;
+            _conexion.AbrirBd();
+
+            string consulta = "SELECT * FROM Usuario WHERE Correo = @Correo";
+            var parametros = new DbParameter[]
+            {
+                _conexion.CreateParameter("@Correo", correo)
+            };
+
+            var tabla = _conexion.EjecutarConsultaSql(consulta, parametros);
+
+            if (tabla.Rows.Count > 0)
+            {
+                DataRow fila = tabla.Rows[0];
+                usuario = new Usuario
+                {
+                    IdUsuario = Convert.ToInt32(fila["IdUsuario"]),
+                    NombreUsuario = fila["NombreUsuario"].ToString() ?? "",
+                    Contraseña = fila["Contraseña"].ToString() ?? "",
+                    Correo = fila["Correo"].ToString() ?? "",
+                    NombreRol = fila["NombreRol"].ToString() ?? "",
+                    Telefono = Convert.ToInt32(fila["Telefono"])
+                };
+            }
+
+            _conexion.CerrarBd();
+            return usuario;
+        }
+
+        public bool VerificarCredenciales(string correo, string contraseña)
+        {
+            var usuario = ConsultarPorCorreo(correo);
+            if (usuario == null)
+                return false;
+
+            // Verifica si la contraseña coincide con el hash almacenado
+            return BCrypt.Net.BCrypt.Verify(contraseña, usuario.Contraseña);
+        }
+
+        public bool Insertar(Usuario usuario)
+        {
+            // Encripta la contraseña antes de guardarla
+            usuario.Contraseña = BCrypt.Net.BCrypt.HashPassword(usuario.Contraseña);
+            
+            _conexion.AbrirBd();
+
+            string sql = @"INSERT INTO Usuario 
+                (IdUsuario, NombreUsuario, Contraseña, Correo, NombreRol, Telefono)
+                VALUES (@IdUsuario,@NombreUsuario, @Contraseña, @Correo, @NombreRol, @Telefono)";
+
+            var parametros = new[]
+            {
+                _conexion.CreateParameter("@IdUsuario", usuario.IdUsuario),
+                _conexion.CreateParameter("@NombreUsuario", usuario.NombreUsuario),
+                _conexion.CreateParameter("@Contraseña", usuario.Contraseña),
+                _conexion.CreateParameter("@Correo", usuario.Correo),
+                _conexion.CreateParameter("@NombreRol", usuario.NombreRol),
+                _conexion.CreateParameter("@Telefono", usuario.Telefono)
+            };
+
+            int filas = _conexion.EjecutarComandoSql(sql, parametros);
+            _conexion.CerrarBd();
+            return filas > 0;
+        }
+
+        public bool ActualizarUsuario(Usuario usuario)
+        {
+            _conexion.AbrirBd();
+
+            // Primero verificamos si necesitamos actualizar la contraseña
+            string sqlOriginal = "SELECT Contraseña FROM Usuario WHERE IdUsuario = @IdUsuario";
+            var paramId = _conexion.CreateParameter("@IdUsuario", usuario.IdUsuario);
+            
+            var resultadoOriginal = _conexion.EjecutarConsultaSql(sqlOriginal, new[] { paramId });
+            string contraseñaActual = "";
+            
+            if (resultadoOriginal.Rows.Count > 0)
+            {
+                contraseñaActual = resultadoOriginal.Rows[0]["Contraseña"].ToString() ?? "";
+            }
+
+            // Si la contraseña es diferente de la actual, encriptarla
+            if (!string.IsNullOrEmpty(usuario.Contraseña) && usuario.Contraseña != contraseñaActual)
+            {
+                usuario.Contraseña = BCrypt.Net.BCrypt.HashPassword(usuario.Contraseña);
+            }
+
+            string sql = @"UPDATE Usuario 
+                       SET NombreUsuario = @NombreUsuario,
+                           Contraseña = @Contraseña,
+                           Correo = @Correo,
+                           NombreRol = @NombreRol,
+                           Telefono = @Telefono
+                       WHERE IdUsuario = @IdUsuario";
+
+            var parametros = new DbParameter[]
+            {
+                _conexion.CreateParameter("@NombreUsuario", usuario.NombreUsuario),
+                _conexion.CreateParameter("@Contraseña", usuario.Contraseña),
+                _conexion.CreateParameter("@Correo", usuario.Correo),
+                _conexion.CreateParameter("@NombreRol", usuario.NombreRol),
+                _conexion.CreateParameter("@Telefono", usuario.Telefono),
+                _conexion.CreateParameter("@IdUsuario", usuario.IdUsuario)
+            };  
+
+            int filas = _conexion.EjecutarComandoSql(sql, parametros);
+            _conexion.CerrarBd();
+
+            return filas > 0;
+        }
+
+        public bool EliminarUsuario(int id)
+        {
+            string sql = "DELETE FROM Usuario WHERE IdUsuario = @IdUsuario";
+
+            var parametros = new DbParameter[]
+            {
+                _conexion.CreateParameter("@IdUsuario", id)
+            };
+
+            _conexion.AbrirBd();
+            int filas = _conexion.EjecutarComandoSql(sql, parametros);
+            _conexion.CerrarBd();
+
+            return filas > 0;
         }
     }
 }
