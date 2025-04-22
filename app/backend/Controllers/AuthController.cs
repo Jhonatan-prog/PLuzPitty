@@ -27,29 +27,56 @@ namespace app.backend.Controllers
 
              POST http://localhost:5000/api/auth/login
             Headers:
-             KEY:Content-Type:  VALUE: application/json   
-            }*/
+             KEY:Content-Type:  VALUE: application/json
+
+            {
+                "Correo": "Juan@12correo",
+                "Contraseña": "12345"
+            } 
+
+        }*/
+
         [AllowAnonymous]
         [HttpPost("login")]
         public IActionResult Login([FromBody] LoginModel login)
         {
-            _controlConexion.AbrirBd();
-            string comandoSQL = "SELECT COUNT(*) FROM usuario WHERE Correo = @Correo AND contraseña = @Contraseña";
-            var parametros = new[]
+            try
             {
-                new SqlParameter("@Correo", login.Correo),
-                new SqlParameter("@Contraseña", login.Contraseña)
-            };
-            var result = _controlConexion.EjecutarConsultaSql(comandoSQL, parametros);
-            _controlConexion.CerrarBd();
+                _controlConexion.AbrirBd();
+        
+                // 1. Primero obtener el hash almacenado del usuario
+                string getHashSql = "SELECT Contraseña, Correo FROM usuario WHERE Correo = @Correo";
+                var parametros = new[]
+                {
+                    new SqlParameter("@Correo", login.Correo)
+                };
+        
+                var result = _controlConexion.EjecutarConsultaSql(getHashSql, parametros);
 
-            if (result.Rows[0][0].ToString() == "1")
-            {
-                var token = _tokenService.GenerateToken(login.Correo);
-                return Ok(new { Token = token });
+                if (result.Rows.Count == 0)
+                {
+                    return Unauthorized(new { Mensaje = "Usuario no encontrado" });
+                }
+
+                string storedHash = result.Rows[0]["Contraseña"].ToString();
+                string correo = result.Rows[0]["Correo"].ToString();
+        
+                // 2. Verificar la contraseña plana con el hash BCrypt
+                bool isPasswordValid = BCrypt.Net.BCrypt.Verify(login.Contraseña, storedHash);
+
+                if (isPasswordValid)
+                {
+                    var token = _tokenService.GenerateToken(correo);
+                    return Ok(new { Token = token });
+                }
+
+                return Unauthorized(new { Mensaje = "Contraseña incorrecta" });
             }
-
-            return Unauthorized();
-        }
+            finally
+            {
+                _controlConexion.CerrarBd();
+            }
+        }   
+        
     }
 }
