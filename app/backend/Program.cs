@@ -7,6 +7,11 @@ var builder = WebApplication.CreateBuilder(args); // Crea un constructor para co
 
 builder.Services.AddControllers(); // Agrega soporte para controladores MVC, permitiendo manejar solicitudes HTTP a través de acciones en los controladores.
 builder.Services.AddHttpContextAccessor();
+builder.Services.AddSingleton<ControlConexion>();
+builder.Services.AddScoped<ProductoService>();
+
+builder.Services.AddScoped<app.backend.Services.UsuarioService>();
+builder.Services.AddSingleton<TokenService>(); // Registra el servicio TokenService como singleton, asegurando una única instancia compartida en toda la aplicación.
 
 
 builder.Services.AddCors(options => // Configura CORS (Cross-Origin Resource Sharing) para la aplicación.

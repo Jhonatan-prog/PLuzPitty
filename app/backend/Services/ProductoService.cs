@@ -1,127 +1,120 @@
-using System;
-using System.Collections.Generic;
-using app.backend.App_Data;
 using app.backend.Models;
-using System.Linq;
+using System.Data;
+using Microsoft.Data.SqlClient;
+using System.Data.Common;
 
 
 namespace app.backend.Services
 {
     public class ProductoService
     {
-        private MiContextoDeDatos _context = new MiContextoDeDatos();
-        public Producto producto {get;set;}
+        private readonly ControlConexion _conexion;
 
-        //Insertar un prodcuto
-        public string InsertarProducto()
+        public ProductoService(ControlConexion conexion)
         {
-            try
-            {
-                _context.Productos.Add(producto);
-                _context.SaveChanges();
-                return "Producto Insertado Correctamente";
-            }
-            catch (Exception ex)
-            {
-                return "Error al Insertar el Producto" + ex.Message;
-            }   
+            _conexion = conexion;
         }
 
-        //Actualizar un producto
-        public string ActualizarProdcuto()
-        {
-            try
-            {
-                 //Antes de actualizar vemos si Existe
-                 Producto produc = Consultar(producto.Id_Producto);
-                if(produc == null)
-                {
-                    return "El prodcuto no Existe";
-                }
-                // Desconectamos la entidad actual antes de actualizar
-                _context.Entry(produc).State = Microsoft.EntityFrameworkCore.EntityState.Detached;
-        
-                 // Ahora actualizamos con la nueva entidad
-                 _context.Productos.Update(producto); 
-                _context.SaveChanges();
-                return "Producto Actualizado Correctamente";
-
-            }
-            catch (Exception ex)
-            {
-                return "Erro al Actualizar Prodcuto  " + ex.Message;
-            }
-        }
-
-        private bool Validar(int Id_Producto)
-        {
-            if(Consultar(Id_Producto) == null)
-            {
-                return false;
-            }
-            else
-            {
-                return true;
-            }
-        }
-
-        //Consultar un producto por id
-        public Producto Consultar(int Id_Producto)
-        {
-            return _context.Productos.FirstOrDefault(p => p.Id_Producto == Id_Producto);
-        }
-
-        //Eliminar Producto
-        public string Eliminar()
-        {
-            //Primero se consulta
-            try
-            {
-                Producto product = Consultar(producto.Id_Producto);
-                if(product == null)
-                {
-                    return "El producto no Existe";
-                }
-                //si el empleado existe se elimina
-                _context.Productos.Remove(producto);
-                _context.SaveChanges();
-                return "Producto Eliminado Correctamente";
-            }
-            catch (Exception ex)
-            {
-                return "Error al Eliminar Producto" + ex.Message;
-            }
-
-           
-        }
-
-        //Eliminar Poducto X ID
-        public string EliminarXId(int Id_Producto)
-        {
-            try
-            {
-                Producto product = Consultar(Id_Producto);
-                if(product == null)
-                {
-                    return "El producto no Existe";
-                }
-                //si el empleado existe se elimina
-                _context.Productos.Remove(product);
-                _context.SaveChanges();
-                return "Producto Eliminado Correctamente";
-            }
-            catch (Exception ex)
-            {
-                return "Error al Eliminar Producto" + ex.Message;
-            }
-        }
-         
-        //Listar Productos
         public List<Producto> ConsultarTodos()
         {
-            return _context.Productos
-            //.OrderBy(p => p.Nombre)
-            .ToList();
+            var productos = new List<Producto>();
+            _conexion.AbrirBd();
+
+            string consulta = "SELECT * FROM Producto";
+            var tabla = _conexion.EjecutarConsultaSql(consulta, null);
+
+            foreach (DataRow fila in tabla.Rows)
+            {
+                productos.Add(new Producto
+                {
+                    CodigoProducto = Convert.ToInt32(fila["CodigoProducto"]),
+                    Nombre = fila["Nombre"].ToString() ?? "",
+                    Descripcion = fila["Descripcion"]?.ToString(),
+                    VlrUnitario = Convert.ToDecimal(fila["VlrUnitario"]),
+                    VlrSinIva = Convert.ToDecimal(fila["VlrSinIva"]),
+                    VlrCompra = Convert.ToDecimal(fila["VlrCompra"]),
+                    Stock = Convert.ToInt32(fila["Stock"]),
+                    FechaIngreso = Convert.ToDateTime(fila["FechaIngreso"]),
+                    Imagen = fila["imagen"].ToString() ?? ""
+                });
+            }
+
+            _conexion.CerrarBd();
+            return productos;
+        }
+
+        public bool Insertar(Producto p)
+        {
+            _conexion.AbrirBd();
+
+            string sql = @"INSERT INTO Producto 
+                (Nombre, Descripcion, VlrUnitario, VlrSinIva, VlrCompra, Stock, FechaIngreso, imagen)
+                VALUES (@Nombre, @Descripcion, @VlrUnitario, @VlrSinIva, @VlrCompra, @Stock, @FechaIngreso, @imagen)";
+
+            var parametros = new[]
+            {
+                _conexion.CreateParameter("@Nombre", p.Nombre),
+                _conexion.CreateParameter("@Descripcion", p.Descripcion),
+                _conexion.CreateParameter("@VlrUnitario", p.VlrUnitario),
+                _conexion.CreateParameter("@VlrSinIva", p.VlrSinIva),
+                _conexion.CreateParameter("@VlrCompra", p.VlrCompra),
+                _conexion.CreateParameter("@Stock", p.Stock),
+                _conexion.CreateParameter("@FechaIngreso", p.FechaIngreso),
+                _conexion.CreateParameter("@imagen", p.Imagen)
+            };
+
+            int filas = _conexion.EjecutarComandoSql(sql, parametros);
+            _conexion.CerrarBd();
+            return filas > 0;
+        }
+
+        public bool ActualizarProducto(Producto producto)
+        {
+            string sql = @"UPDATE Producto 
+                       SET Nombre = @Nombre,
+                           Descripcion = @Descripcion,
+                           VlrUnitario = @VlrUnitario,
+                           VlrSinIva = @VlrSinIva,
+                           VlrCompra = @VlrCompra,
+                           Stock = @Stock,
+                           FechaIngreso = @FechaIngreso,
+                           imagen = @imagen
+                       WHERE CodigoProducto = @CodigoProducto";
+
+            var parametros = new DbParameter[]
+            {
+                _conexion.CreateParameter("@Nombre", producto.Nombre),
+                _conexion.CreateParameter("@Descripcion", producto.Descripcion),
+                _conexion.CreateParameter("@VlrUnitario", producto.VlrUnitario),
+                _conexion.CreateParameter("@VlrSinIva", producto.VlrSinIva),
+                _conexion.CreateParameter("@VlrCompra", producto.VlrCompra),
+                _conexion.CreateParameter("@Stock", producto.Stock),
+                _conexion.CreateParameter("@FechaIngreso", producto.FechaIngreso),
+                _conexion.CreateParameter("@imagen", producto.Imagen),
+                _conexion.CreateParameter("@CodigoProducto", producto.CodigoProducto)
+            };  
+
+                _conexion.AbrirBd();
+                int filas = _conexion.EjecutarComandoSql(sql, parametros);
+                _conexion.CerrarBd();
+
+                return filas > 0;
+        }
+
+        public bool EliminarProducto(int id)
+        {
+            string sql = "DELETE FROM Producto WHERE CodigoProducto = @id";
+
+            var parametros = new DbParameter[]
+            {
+                _conexion.CreateParameter("@id", id)
+            };
+
+            _conexion.AbrirBd();
+            int filas = _conexion.EjecutarComandoSql(sql, parametros);
+            _conexion.CerrarBd();
+
+            return filas > 0;
         }
 
         

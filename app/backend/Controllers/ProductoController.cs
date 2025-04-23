@@ -1,8 +1,6 @@
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
-using app.backend.Models;
 using app.backend.Services;
-
+using app.backend.Models;
 
 namespace app.backend.Controllers
 {
@@ -10,57 +8,53 @@ namespace app.backend.Controllers
     [Route("api/Producto")]
     public class ProductoController : ControllerBase
     {
-       
+        private readonly ProductoService _servicio;
 
-        //GET : api/Producto/Consultar
+        public ProductoController(ProductoService servicio)
+        {
+            _servicio = servicio;
+        }
+
+        //http://localhost:5000/api/producto/ConsultarTodos
         [HttpGet]
         [Route("ConsultarTodos")]
         public List<Producto> ConsultarTodos()
         {
-            ProductoService Servicio = new ProductoService();
-            return Servicio.ConsultarTodos();
+            return _servicio.ConsultarTodos();
         }
 
-        //GET : api/Producto/Consultar/{id}
-        [HttpGet]
-        [Route("Consultar/{id}")]
-        public Producto Consultar(int Id_Producto)
-        {
-            ProductoService Servicio = new ProductoService();
-            return Servicio.Consultar(Id_Producto);
-        }
-
-        //POST : api/Producto/Insertar
+        ////http://localhost:5000/api/producto/Insertar
         [HttpPost]
-        [ Route("Insertar")]
-        public string Insertar([FromBody] Producto producto)
+        [Route("Insertar")]
+        public ActionResult Insertar([FromBody] Producto producto)
         {
-            ProductoService Servicio = new ProductoService();
-            Servicio.producto = producto;
-            return Servicio.InsertarProducto();
+            bool resultado = _servicio.Insertar(producto);
+            if (resultado)
+                return Ok(new { message = "Producto registrado correctamente" });
+            return BadRequest(new { message = "No se pudo registrar el producto" });
         }
 
-        //PUT : api/Producto/Actualizar
-        [HttpPut]
+        //http://localhost:5000/api/producto/Actualizar/1
+
+        [HttpPut("{id}")]
         [Route("Actualizar")]
-        public string Actualizar([FromBody] Producto producto)
+        public IActionResult Actualizar(int id, [FromBody] Producto producto)
         {
-            ProductoService Servicio = new ProductoService();
-            Servicio.producto = producto;
-            return Servicio.ActualizarProdcuto();
+            if (id != producto.CodigoProducto)
+                return BadRequest("ID en la ruta no coincide con el del producto");
+
+            var resultado = _servicio.ActualizarProducto(producto);
+            return resultado ? Ok("Producto actualizado") : NotFound("Producto no encontrado");
         }
 
-        //DELETE : api/Producto/Eliminar/{id}
-        [HttpDelete]
-        [Route("Eliminar/{id}")]
-        public string EliminarXId(int Id_Producto)
+        //http://localhost:5000/api/producto/Eliminar/1
+
+        [HttpDelete("{id}")]
+        [Route("Eliminar")]
+        public IActionResult Eliminar(int id)
         {
-            ProductoService Servicio = new ProductoService();
-            return Servicio.EliminarXId(Id_Producto);
+            var resultado = _servicio.EliminarProducto(id);
+            return resultado ? Ok("Producto eliminado") : NotFound("Producto no encontrado");
         }
-
-
-        
     }
-
 }

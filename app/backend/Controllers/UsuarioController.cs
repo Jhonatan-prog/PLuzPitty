@@ -1,83 +1,188 @@
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using app.backend.Models;
 using app.backend.Services;
-using BCrypt.Net;
-using app.backend.App_Data;
+using System;
+using System.Collections.Generic;
+using Microsoft.AspNetCore.Authorization; // Importa el espacio de nombres para el control de autorización en ASP.NET Core.
 
 namespace app.backend.Controllers
 {
+    [Route("api/[controller]")]
     [ApiController]
-    [Route("api/Usuario")]
+    //[Authorize]
     public class UsuarioController : ControllerBase
     {
-        private MiContextoDeDatos _contex = new MiContextoDeDatos();
+        private readonly UsuarioService _usuarioService;
 
-        //GET : api/Usuario/ConsultarTodos
+        public UsuarioController(UsuarioService usuarioService)
+        {
+            _usuarioService = usuarioService;
+        }
+
+        // GET: api/Usuario
         [HttpGet]
-        [Route("ConsultarTodos")]
-        public List<Usuario> ConsultarTodos()
+        public ActionResult<IEnumerable<Usuario>> GetUsuarios()
         {
-            UsuarioService Servicio = new UsuarioService();
-            return Servicio.ConsultarTodos();
-        }    
-
-        //GET :api/Usuario/Consultar?id=1
-        [HttpGet]
-        [Route("Consultar")]
-        public Usuario Consultar(int id)
-        {
-            UsuarioService Servicio = new UsuarioService();
-            return Servicio.Consultar(id);
-        }
-
-        [HttpPost]
-        [Route("CrearUsuario")]
-        public string CrearUsuario ([FromBody] Usuario usuario)
-        {
-            // Encriptar la contraseña
-            usuario.Contraseña = BCrypt.Net.BCrypt.HashPassword(usuario.Contraseña);
-            UsuarioService servicio = new UsuarioService();
-            servicio.usuario = usuario;
-            return servicio.CrearUsuario();
-        }
-
-        //PUT : api/Producto/Actualizar
-        [HttpPut]
-        [Route("Actualizar")]
-        public string Actualizar([FromBody] Usuario usuario)
-        {
-            UsuarioService Servicio = new UsuarioService();
-            Servicio.usuario = usuario;
-            return Servicio.ActualizarUsuario();
-        }
-
-        //DELETE : api/Usuario/Eliminar?id=1
-        [HttpDelete]
-        [Route("Eliminar")]
-        public string Eliminar(int IdUsuario)
-        {
-            UsuarioService Servicio = new UsuarioService();
-            return Servicio.EliminarXId(IdUsuario);
-        }
-        
-    }
-
-    /*
-Postman Se puede probar asi
-     {
-        
-        "nombreUsuario": "Alejandro",
-        "contraseña": "andro",
-        "correo": "fff@cjf",
-        "nombreRol": "ADMINISTRADOR",
-        "telefono": 3028575,
-        "roler": [
+            try
             {
-                "nombreRol": "1"
+                var usuarios = _usuarioService.ConsultarTodos();
+                return Ok(usuarios);
             }
-        ],
-        "facturas": []
-    }
-    */
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error interno del servidor: {ex.Message}");
+            }
+        }
+
+        // GET: api/Usuario/5
+        [HttpGet("{id}")]
+        public ActionResult<Usuario> GetUsuario(int id)
+        {
+            try
+            {
+                var usuario = _usuarioService.ConsultarPorId(id);
+
+                if (usuario == null)
+                {
+                    return NotFound($"Usuario con ID {id} no encontrado");
+                }
+
+                // No devolvemos la contraseña en la respuesta
+                usuario.Contraseña = "";
+                return Ok(usuario);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error interno del servidor: {ex.Message}");
+            }
+        }
+
+        // GET: api/Usuario/correo/usuario@ejemplo.com
+        [HttpGet("correo/{correo}")]
+        public ActionResult<Usuario> GetUsuarioPorCorreo(string correo)
+        {
+            try
+            {
+                var usuario = _usuarioService.ConsultarPorCorreo(correo);
+
+                if (usuario == null)
+                {
+                    return NotFound($"Usuario con correo {correo} no encontrado");
+                }
+
+                // No devolvemos la contraseña en la respuesta
+                usuario.Contraseña = "";
+                return Ok(usuario);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error interno del servidor: {ex.Message}");
+            }
+        }
+
+        // POST: api/Usuario
+        [HttpPost]
+        [AllowAnonymous] // Permitir registro sin autenticación
+        public ActionResult<Usuario> CrearUsuario([FromBody] Usuario usuario)
+        {
+            try
+            {
+                if (usuario == null)
+                {
+                    return BadRequest("Datos de usuario inválidos");
+                }
+
+                // Verificar si el correo ya existe
+                var usuarioExistente = _usuarioService.ConsultarPorCorreo(usuario.Correo);
+                if (usuarioExistente != null)
+                {
+                    return Conflict($"Ya existe un usuario con el correo {usuario.Correo}");
+                }
+
+                bool resultado = _usuarioService.Insertar(usuario);
+                
+                if (resultado)
+                {
+                    // No devolvemos la contraseña en la respuesta
+                    usuario.Contraseña = "";
+                    return CreatedAtAction(nameof(GetUsuario), new { id = usuario.IdUsuario }, usuario);
+                }
+                else
+                {
+                    return StatusCode(500, "No se pudo crear el usuario");
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error interno del servidor: {ex.Message}");
+            }
+        }
+
+        // PUT: api/Usuario/5
+        [HttpPut("{id}")]
+        public IActionResult ActualizarUsuario(int id, [FromBody] Usuario usuario)
+        {
+            try
+            {
+                if (usuario == null || id != usuario.IdUsuario)
+                {
+                    return BadRequest("ID de usuario no coincide con el cuerpo de la solicitud");
+                }
+
+                var usuarioExistente = _usuarioService.ConsultarPorId(id);
+                if (usuarioExistente == null)
+                {
+                    return NotFound($"Usuario con ID {id} no encontrado");
+                }
+
+                bool resultado = _usuarioService.ActualizarUsuario(usuario);
+                
+                if (resultado)
+                {
+                    return NoContent(); // 204 No Content
+                }
+                else
+                {
+                    return StatusCode(500, "No se pudo actualizar el usuario");
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error interno del servidor: {ex.Message}");
+            }
+        }
+
+        // DELETE: api/Usuario/5
+        [HttpDelete("{id}")]
+        public IActionResult EliminarUsuario(int id)
+        {
+            try
+            {
+                var usuario = _usuarioService.ConsultarPorId(id);
+                if (usuario == null)
+                {
+                    return NotFound($"Usuario con ID {id} no encontrado");
+                }
+
+                bool resultado = _usuarioService.EliminarUsuario(id);
+                
+                if (resultado)
+                {
+                    return NoContent(); // 204 No Content
+                }
+                else
+                {
+                    return StatusCode(500, "No se pudo eliminar el usuario");
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error interno del servidor: {ex.Message}");
+            }
+        }
+
+        
+    }    
+
 }

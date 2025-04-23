@@ -1,14 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace app.backend.Models
 {
     public class Usuario
     {
         [Key]
+        
         public int IdUsuario { get; set; }
         
         [Required]
@@ -31,10 +31,8 @@ namespace app.backend.Models
         [Required]
         public int Telefono { get; set; }
         
-        //Composición:Un Usuario tiene muchos roles(Relacion uno a muchos) 
-        public List<Rol> Roler { get; set; } = new ();
-
-        //Realcion Uno a muchos: un usuario tiene muchas factura
-        public List<Facturacion> Facturas {get;set;} = new ();
+        // Navigation properties
+        public virtual ICollection<UsuarioRol> UsuarioRoles { get; set; } = new HashSet<UsuarioRol>();
+        public virtual ICollection<HistorialDomicilio> HistorialesDomicilio { get; set; } = new HashSet<HistorialDomicilio>();
     }
 }
