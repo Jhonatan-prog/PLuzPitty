@@ -6,25 +6,26 @@ import { Fetch } from "../types/generic";
 class Request {
     baseUrl: string;
     data: User | {};
-    fetchObj: any;
 
     constructor(BASE_URL: string, data: User | {}) {
         this.baseUrl = BASE_URL;
         this.data = Object.keys(data as object).length ? data : {}
-        this.fetchObj = {}
     }
 
     async fetch(fetchParams: Fetch) {
         const fp = fetchParams;
         try {
             const axResponse: AxiosResponse = await fp.request.method.axiosCallback(this.baseUrl + fp.request.URN, this.data);
-            if (axResponse.statusText.toLocaleLowerCase().trim() === 'ok') {
-                return {
-                    'status': axResponse.status,
-                }
+            if (axResponse.status >= 400) {
+                throw new Error(
+                `Unable to ${fp.request.method.type.toLowerCase()}, server problem with status: ${axResponse.status}`
+                );
             }
 
-            return axResponse.data
+            return {
+                data: axResponse.data,
+                status: axResponse.status
+            }
         } catch (error) {
             console.error(fp.error.message);
         }
@@ -38,7 +39,7 @@ class Request {
                 [key: string]: any
             }
         }) {
-        
+
         const fetchObj = {
             request: {
                 URN: `/api/${tableName}`,
@@ -61,8 +62,9 @@ class Request {
         return data;
     }
 
-    async create(
-        tableName: string, 
+    async post(
+        path: string,
+        body?: any,
         fetchObjConfig?: { 
             header: { 
                 "Content-Type": 'application/json', 
@@ -71,7 +73,7 @@ class Request {
         }) {
         const fetchObj = {
             request: {
-                URN: `/api/${tableName}`,
+                URN: `/api/${path}`,
                 method: {
                     type: 'POST' as Fetch['request']['method']['type'],
                     axiosCallback: axios.post,
@@ -80,16 +82,14 @@ class Request {
                     "Content-Type": 'application/json',
                     ...fetchObjConfig?.header
                 },
-                body: this.data,
+                body: this.data || body,
             },
             error: { 
                 message: "Server problem"
             }
         }
 
-        await this.fetch(fetchObj);
-
-        return true;
+        return await this.fetch(fetchObj);
     }
 
     set newData(newData: User) {
@@ -101,6 +101,4 @@ class Request {
     }
 }
 
-const defaultRequest = new Request('http://localhost:5000', {});
-
-export { Request, defaultRequest };
+export { Request };
