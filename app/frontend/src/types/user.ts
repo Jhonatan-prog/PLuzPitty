@@ -1,11 +1,11 @@
 interface User {
-    IdUsuario: number;
+    IdUsuario?: number;
     NombreUsuario: string;
-    Contraseña: string;
     Correo: string;
-    Telefono: number;
-    Direccion: string;
-    NombreRol: string;
+    Contraseña: string;
+    Telefono?: number;
+    Direccion?: string;
+    NombreRol?: string;
 }
 
 export { User };

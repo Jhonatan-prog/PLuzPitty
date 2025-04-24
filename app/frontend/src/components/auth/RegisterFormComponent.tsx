@@ -2,6 +2,7 @@
 import { useState, useRef, useEffect } from "react";;
 import { v4 as uuidv4 } from 'uuid';
 // validation
+import { defaultRequest } from "../../services/requests";
 import { RTimeValidation } from "../../utils/validation/inputs";
 // styles / types
 import { tailwindStyles as TSCSS} from "../../styles/styles.tailwind";
@@ -26,6 +27,8 @@ const Label = ({ reference, message, isValid, userInput }: LabelProps) => {
 }
 
 const RegisterFormComponent = () => {
+  const DR = defaultRequest;
+
   const $passwordInput = useRef<HTMLInputElement>(null);
   const [onFocus, setOnFocus] = useState<boolean>(false);
 
@@ -60,13 +63,31 @@ const RegisterFormComponent = () => {
     });
   }, [])
 
-  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     if (!validationComplete) {
       e.preventDefault()
       return
     };
 
-  }
+    const userData = {
+      NombreUsuario: name,
+      Correo: email,
+      Contraseña: password,
+      Telefono: 3108972115,
+    }
+
+    DR.newData = userData;
+    const ok = await DR.create("Usuario");
+
+    if (!ok) {
+      console.error("something went worng")
+      return;
+    }
+
+    
+
+    window.location.replace("/")
+   }
 
   return (
     <form action="" method="post" className={`${TSCSS.flexStart}`} onSubmit={handleSubmit}>

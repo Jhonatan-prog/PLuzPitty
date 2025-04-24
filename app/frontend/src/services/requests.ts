@@ -5,10 +5,10 @@ import { Fetch } from "../types/generic";
 
 class Request {
     baseUrl: string;
-    data: User | {} | undefined;
+    data: User | {};
     fetchObj: any;
 
-    constructor(BASE_URL: string, data?: User | {}) {
+    constructor(BASE_URL: string, data: User | {}) {
         this.baseUrl = BASE_URL;
         this.data = Object.keys(data as object).length ? data : {}
         this.fetchObj = {}
@@ -87,7 +87,7 @@ class Request {
             }
         }
 
-        const data = await this.fetch(fetchObj);
+        await this.fetch(fetchObj);
 
         return true;
     }
@@ -101,6 +101,6 @@ class Request {
     }
 }
 
-const defaultRequest = new Request('http://localhost:5000');
+const defaultRequest = new Request('http://localhost:5000', {});
 
 export { Request, defaultRequest };
