@@ -9,6 +9,7 @@ builder.Services.AddControllers(); // Agrega soporte para controladores MVC, per
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddSingleton<ControlConexion>();
 builder.Services.AddScoped<ProductoService>();
+builder.Services.AddScoped<ProveedorService>();
 
 builder.Services.AddScoped<app.backend.Services.UsuarioService>();
 builder.Services.AddSingleton<TokenService>(); // Registra el servicio TokenService como singleton, asegurando una única instancia compartida en toda la aplicación.

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -30,6 +31,6 @@ namespace app.backend.Models
         public string Redes { get; set; }
         
         // Navigation property
-        public virtual ICollection<ProductoProveedor> ProductoProveedores { get; set; }
+        public virtual ICollection<ProductoProveedor> ProductoProveedores { get; set; } = new HashSet<ProductoProveedor>();
     }
 }
