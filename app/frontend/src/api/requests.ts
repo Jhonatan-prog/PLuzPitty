@@ -1,11 +1,11 @@
 import axios from "axios";
 import { AxiosResponse } from "axios";
-import { User } from "../types/user";
+import { User, LoginData } from "../types/user";
 import { Fetch } from "../types/generic";
 
 class Request {
     baseUrl: string;
-    data: User | {};
+    data: User | LoginData | {};
 
     constructor(BASE_URL: string, data: User | {}) {
         this.baseUrl = BASE_URL;
@@ -92,7 +92,7 @@ class Request {
         return await this.fetch(fetchObj);
     }
 
-    set newData(newData: User) {
+    set newData(newData: { [key: string]: any }) {
         this.data = newData;
     }
 

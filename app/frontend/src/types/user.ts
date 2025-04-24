@@ -6,4 +6,9 @@ interface User {
     NombreRol: string;
 }
 
-export { User };
+type LoginData = {
+    Correo: User["Correo"];
+    Contraseña: User["Contraseña"];
+}
+
+export { User, LoginData };

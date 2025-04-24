@@ -1,11 +1,6 @@
-import { User } from "../types/user";
+import { User, LoginData } from "../types/user";
 import { Request } from "./requests";
 import Cookies from "js-cookie";
-
-type LoginData = {
-    Correo: User["Correo"];
-    Contraseña: User["Contraseña"];
-}
 
 class Auth {
     request: Request;
@@ -19,9 +14,13 @@ class Auth {
     }
 
     async login() {
-        this.cred = {
-            Correo: (this.request.data as User).Correo,
-            Contraseña: (this.request.data as User).Contraseña
+        if (!this.cred) {
+            this.cred = {
+                Correo: (this.request.data as User).Correo,
+                Contraseña: (this.request.data as User).Contraseña
+            }
+        } else {
+            this.request.newData = this.cred;
         }
 
         const response = await this.request.post('auth/login', this.cred);
@@ -31,6 +30,8 @@ class Auth {
         } else {
             throw new Error("Invalid response from server");
         }
+
+        return response;
     }
 
     logout() {

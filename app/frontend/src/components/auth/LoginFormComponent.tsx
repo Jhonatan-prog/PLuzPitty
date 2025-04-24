@@ -1,6 +1,6 @@
 // react
 import { useState, ChangeEventHandler } from "react";
-import { useFormStatus } from "react-dom";
+import { Auth } from "../../api/auth";
 import { v4 as uuidv4 } from 'uuid';
 
 // styles
@@ -37,20 +37,47 @@ const Checkbox = ({
 };
 
 const LoginFormComponent = () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const auth = new Auth(undefined, {
+    Correo: email,
+    Contraseña: password
+  });
+
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault()
+
+    const response = await auth.login();
+
+    if (response && response.status >= 400) {
+      console.log("User not found.")
+      return;
+    }
+
+    window.location.replace("http://localhost:5173/")
+   }
+
   return (
-    <form action="" method="post" className={`${TSCSS.flexStart}`}>
+    <form action="" method="post" className={`${TSCSS.flexStart}`} onSubmit={handleSubmit}>
 
       <input 
         type="email" 
         name="email"
         className={styles.input}
         placeholder="Correo"
+        onChange={(e) => {
+          setEmail(e.target.value as string);
+        }}
         id={uuidv4()} />
       <input 
         type="password" 
         name="password"
         className={styles.input}
         placeholder="Contraseña"
+        onChange={(e) => {
+          setPassword(e.target.value as string);
+        }}
         id={uuidv4()} />
 
       <Checkbox label="Recordar usuario" value={false} />
