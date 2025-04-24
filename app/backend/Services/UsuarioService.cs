@@ -32,7 +32,7 @@ namespace app.backend.Services
                     Contraseña = fila["Contraseña"].ToString() ?? "",
                     Correo = fila["Correo"].ToString() ?? "",
                     NombreRol = fila["NombreRol"].ToString() ?? "",
-                    Telefono = Convert.ToInt32(fila["Telefono"])
+                    Telefono = fila["Telefono"].ToString() ?? ""
                     // Las propiedades de navegación no se cargan aquí
                 });
             }
@@ -64,7 +64,7 @@ namespace app.backend.Services
                     Contraseña = fila["Contraseña"].ToString() ?? "",
                     Correo = fila["Correo"].ToString() ?? "",
                     NombreRol = fila["NombreRol"].ToString() ?? "",
-                    Telefono = Convert.ToInt32(fila["Telefono"])
+                    Telefono = fila["Telefono"].ToString() ?? ""
                 };
             }
 
@@ -95,7 +95,7 @@ namespace app.backend.Services
                     Contraseña = fila["Contraseña"].ToString() ?? "",
                     Correo = fila["Correo"].ToString() ?? "",
                     NombreRol = fila["NombreRol"].ToString() ?? "",
-                    Telefono = Convert.ToInt32(fila["Telefono"])
+                    Telefono = fila["Telefono"].ToString() ?? ""
                 };
             }
 
@@ -121,12 +121,11 @@ namespace app.backend.Services
             _conexion.AbrirBd();
 
             string sql = @"INSERT INTO Usuario 
-                (IdUsuario, NombreUsuario, Contraseña, Correo, NombreRol, Telefono)
-                VALUES (@IdUsuario,@NombreUsuario, @Contraseña, @Correo, @NombreRol, @Telefono)";
+                (NombreUsuario, Contraseña, Correo, NombreRol, Telefono)
+                VALUES (@NombreUsuario, @Contraseña, @Correo, @NombreRol, @Telefono)";
 
             var parametros = new[]
             {
-                _conexion.CreateParameter("@IdUsuario", usuario.IdUsuario),
                 _conexion.CreateParameter("@NombreUsuario", usuario.NombreUsuario),
                 _conexion.CreateParameter("@Contraseña", usuario.Contraseña),
                 _conexion.CreateParameter("@Correo", usuario.Correo),

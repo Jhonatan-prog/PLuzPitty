@@ -1,9 +1,10 @@
 // libs
+import axios from 'axios';
 import { useState, useRef, useEffect } from "react";;
 import { v4 as uuidv4 } from 'uuid';
 // validation
-import { defaultRequest } from "../../services/requests";
 import { RTimeValidation } from "../../utils/validation/inputs";
+import { defaultRequest } from "../../services/requests";
 // styles / types
 import { tailwindStyles as TSCSS} from "../../styles/styles.tailwind";
 import { LabelProps } from "../../types/compProps";
@@ -64,29 +65,32 @@ const RegisterFormComponent = () => {
   }, [])
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault()
     if (!validationComplete) {
-      e.preventDefault()
       return
     };
 
     const userData = {
       NombreUsuario: name,
-      Correo: email,
       Contraseña: password,
-      Telefono: 3108972115,
+      Correo: email,
+      NombreRol: "ADMINISTRADOR",
+      Telefono: "3113788092"
     }
 
     DR.newData = userData;
-    const ok = await DR.create("Usuario");
+    DR.create('Usuario');
+    // const response = await axios.post('http://localhost:5000/api/Usuario', userData)
+    // .catch(error => {
+    //   console.log(error.response.data); // This will show any detailed error message from the server
+    // });
 
-    if (!ok) {
+    if (!true) {
       console.error("something went worng")
       return;
     }
 
-    
-
-    window.location.replace("/")
+    // window.location.replace("http://localhost:5173/login")
    }
 
   return (
