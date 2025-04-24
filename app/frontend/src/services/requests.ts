@@ -6,17 +6,19 @@ import { Fetch } from "../types/generic";
 class Request {
     baseUrl: string;
     data: User | {} | undefined;
+    fetchObj: any;
 
     constructor(BASE_URL: string, data?: User | {}) {
         this.baseUrl = BASE_URL;
         this.data = Object.keys(data as object).length ? data : {}
+        this.fetchObj = {}
     }
 
     async fetch(fetchParams: Fetch) {
         const fp = fetchParams;
         try {
-            const axResponse: AxiosResponse = await fp.axiosCallback(this.baseUrl + fp.URN, this.data);
-            if (!axResponse.status) {
+            const axResponse: AxiosResponse = await fp.request.method.axiosCallback(this.baseUrl + fp.request.URN, this.data);
+            if (axResponse.statusText.toLocaleLowerCase().trim() === 'ok') {
                 return {
                     'status': axResponse.status,
                 }
@@ -24,17 +26,39 @@ class Request {
 
             return axResponse.data
         } catch (error) {
-            console.error(fp.errorHandler.errorMessage);
+            console.error(fp.error.message);
         }
     }
 
-    async get() {
-        try {
-          const response = await axios.get('/user?ID=12345');
-          console.log(response);
-        } catch (error) {
-          console.error(error);
+    async get(
+        tableName: string, 
+        fetchObjConfig?: { 
+            header: { 
+                "Content-Type": 'application/json', 
+                [key: string]: any
+            }
+        }) {
+        
+        const fetchObj = {
+            request: {
+                URN: `/api/${tableName}`,
+                method: {
+                    type: 'GET' as Fetch['request']['method']['type'],
+                    axiosCallback: axios.get
+                },
+                header: {
+                    "Content-Type": 'application/json',
+                    ...fetchObjConfig?.header
+                },
+            },
+            error: { 
+                message: "Server problem"
+            }
         }
+
+        const data = await this.fetch(fetchObj);
+        
+        return data;
     }
 
     async create(
@@ -46,21 +70,26 @@ class Request {
             } 
         }) {
         const fetchObj = {
-            URN: `/api/${tableName}`,
-            method: 'POST' as Fetch['method'],
-            header: {
-                "Content-Type": 'application/json',
-                ...fetchObjConfig?.header
+            request: {
+                URN: `/api/${tableName}`,
+                method: {
+                    type: 'POST' as Fetch['request']['method']['type'],
+                    axiosCallback: axios.post,
+                },
+                header: {
+                    "Content-Type": 'application/json',
+                    ...fetchObjConfig?.header
+                },
+                body: this.data,
             },
-            body: this.data,
-            axiosCallback: axios.post,
-            errorHandler: { 
-                errorMessage:"The user could not be created."
+            error: { 
+                message: "Server problem"
             }
         }
+
         const data = await this.fetch(fetchObj);
 
-        return data;
+        return true;
     }
 
     set newData(newData: User) {

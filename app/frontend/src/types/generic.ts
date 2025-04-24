@@ -1,18 +1,22 @@
 import { User } from "./user";
 import {AxiosResponse} from "axios";
 
-interface ErrorHandler {
-    errorMessage: string;
+interface Error {
+    message: string;
 }
 
 type Method = 'GET' | 'POST' | 'PUT' | 'DELETE';
 interface Fetch {
-    URN: string;
-    method: Method;
-    header: { [key: string]: any };
-    body?: { [key: string]: any };
-    axiosCallback: (url: string, data?: any) => any
-    errorHandler: ErrorHandler;
+    request: {
+        URN: string;
+        method: { 
+            type: Method
+            axiosCallback: (url: string, data?: any) => any
+        };
+        header: { [key: string]: any };
+        body?: { [key: string]: any };
+    }
+    error: Error;
 }
 
-export { Fetch, ErrorHandler };
+export { Fetch, Error as ErrorObj };
