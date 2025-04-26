@@ -1,6 +1,6 @@
 import Sidebar from "../../components/pagInicio/sidebar";
 import Header from "../../components/pagInicio/header";
-import AgregarProducto from "../../components/FormAgregarProduct/AddProduct";
+import AgregarProveedor from "../../components/FormAgregarProveedor/AddProveedor";
 
 export default function Dashboard() {
     return (
@@ -8,8 +8,8 @@ export default function Dashboard() {
         <Sidebar />
         <main className="flex-1 bg-white p-6 overflow-auto">
           <Header />
-          {/*Formulario de productos */}
-          <AgregarProducto />
+          {/*Formulario de proveedores */}
+          <AgregarProveedor />
         </main>
       </div>
     );

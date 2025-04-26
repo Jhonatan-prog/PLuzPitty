@@ -6,6 +6,8 @@ import Rapeluches from "../../assets/Rapeluches.jpg"
 import creamHela from "../../assets/CreamHelado.png"
 import Norma from "../../assets/Norma.png"
 import ProveedorCard from "../../components/pagProveedor/ProveedorCard";
+import { Link } from "react-router-dom";
+
 
 // Lista de productos que vamos a mostrar
 const proveedor: ProveedorProps[] = [
@@ -37,9 +39,12 @@ export default function Dashboard() {
         </div>
 
         {/* Botón flotante de agregar */}
-        <button className="fixed bottom-8 right-8 bg-cyan-300 hover:bg-cyan-500 text-cyan-800 p-4 rounded-full shadow-lg">
+        <Link to="/Addproveedor">
+          <button className="fixed bottom-8 right-8 bg-cyan-300 hover:bg-cyan-500 text-cyan-800 p-4 rounded-full shadow-lg">
             <FaPlus size={24} />
-        </button>
+          </button>
+        </Link>
+
       </main>
     </div>
   );
