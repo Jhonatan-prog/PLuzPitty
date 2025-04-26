@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom"; 
 import perfil from "../../assets/perfil.png";
 import productos from "../../assets/productos.png";
 import inventario from "../../assets/inventario.png";
@@ -10,13 +11,13 @@ import cerrarSesion from "../../assets/cerrarSesion.png";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 
 const menuItems = [// Estas son las opciones que tenemos en la barra lateral
-  { label: "Productos", icon: productos },
-  { label: "Inventario", icon: inventario },
-  { label: "Proveedores", icon: proveedores },
-  { label: "Estadísticas", icon: estadisticas },
-  { label: "Domicilios", icon: domicilios },
-  { label: "Devoluciones", icon: devoluciones },
-  { label: "Cerrar sesión", icon: cerrarSesion },
+  { label: "Productos", icon: productos, path: "/inicio" },
+  { label: "Inventario", icon: inventario, path: "/inventario" },
+  { label: "Proveedores", icon: proveedores, path: "/proveedores" },
+  { label: "Estadísticas", icon: estadisticas, path: "/estadisticas"},
+  { label: "Domicilios", icon: domicilios, path: "/domicilios" },
+  { label: "Devoluciones", icon: devoluciones, path: "/devoluciones" },
+  { label: "Cerrar sesión", icon: cerrarSesion, path: "/logout" },
 ];
 
 const Sidebar = () => {
@@ -47,14 +48,13 @@ const Sidebar = () => {
 
       <ul className="flex flex-col gap-4 mt-10">
         {menuItems.map((item, index) => (
-          <li
-            key={index}
-            className="flex items-center gap-2 text-sm cursor-pointer hover:text-purple-700 py-4"
-          >
+          <Link key={index} to={item.path}>
+            <li className="flex items-center gap-2 text-sm text-black-400 cursor-pointer hover:text-purple-700 py-4">
             <img src={item.icon} alt={item.label} className="w-8 h-8 justify-center" />
             {/* Solo mostramos el texto del ítem si la barra está abierta */}
             {isOpen && <span>{item.label}</span>}
-          </li>
+            </li>
+          </Link>
         ))}
       </ul>
     </div>
