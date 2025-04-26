@@ -5,6 +5,7 @@ import RegisterPage from "./pages/auth/RegisterPage";
 import PasswordRecoveryPage from "./pages/auth/PasswordRecoveryPage";
 import PasswordResetPage from "./pages/auth/PasswordResetPage";
 import AgregarProducto from "../src/pages/FormAgregar/Dashboard";
+import Proveedor from "../src/pages/pagProveedor/Dashboard";
 
 const AppRoutes = () => {
     return (
@@ -18,6 +19,7 @@ const AppRoutes = () => {
                 <Route path="/forgot-password" element={<PasswordRecoveryPage />} />
                 <Route path="/reset-password" element={<PasswordResetPage />} />
                 <Route path="/Add" element={<AgregarProducto />} />
+                <Route path="/Proveedor" element={<Proveedor />} />
                 <Route path="*" element={<div>404 Not Found</div>} />
             </Routes>
         </Router>
