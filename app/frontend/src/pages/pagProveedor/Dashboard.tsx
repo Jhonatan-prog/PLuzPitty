@@ -7,33 +7,84 @@ import creamHela from "../../assets/CreamHelado.png"
 import Norma from "../../assets/Norma.png"
 import ProveedorCard from "../../components/pagProveedor/ProveedorCard";
 import { Link } from "react-router-dom";
-
+import { Request } from "../../api/requests";
+import { useEffect, useState } from "react";
 
 // Lista de productos que vamos a mostrar
-const proveedor: ProveedorProps[] = [
-  { imgSrc: Rapeluches, name: "Rapeluches", Tel: "319 780 6787", description: "Empresa fabricante de peluches" },
-  { imgSrc: creamHela, name: "CreamHelado", Tel: "319 780 6787", description: "Empresa fabricante y comercializadora de helados" },
-  { imgSrc: Norma, name: "Norma", Tel: "319 780 6787", description: "Empresa fabricante de utiles escolares" },
-];
+// const proveedor: ProveedorProps[] = [
+//   { imgSrc: Rapeluches, nombre: "Rapeluches", telefono: "319 780 6787"/*, description: "Empresa fabricante de peluches"*/ },
+//   { imgSrc: creamHela, nombre: "CreamHelado", telefono: "319 780 6787"/*, description: "Empresa fabricante y comercializadora de helados"*/ },
+//   { imgSrc: Norma, nombre: "Norma", telefono: "319 780 6787"/*, description: "Empresa fabricante de utiles escolares" */},
+// ];
 
 export default function Dashboard() {
+  //almacena los proveedores
+  const [proveedor, setProveedores] = useState<ProveedorProps[]>([]);
+  const [filteredProveedores, setFilteredProveedores] = useState<ProveedorProps[]>([]); //almacena los proveedores filtrados
+  const [error, setError] = useState<string | null>(null);
+
+  //realiza la solicitud al cargar la pagina
+  //useEffect para obtener los proveedores desde la API
+  useEffect(() => {
+    const fetchProveedores = async () => {
+      const request = new Request("http://localhost:5000", {});
+      try {
+        const response = await request.get("Proveedor/ConsultarTodos");
+        console.log('Datos del servidor:', response?.data);
+        if (response?.data) {
+          setProveedores(response.data);
+          setFilteredProveedores(response.data); // Inicialmente mostramos todos los proveedores
+        } else {
+          throw new Error("No se pudieron obtener los datos de los proveedores.");
+        }
+      } catch (err: any) {
+        setError(err.message);
+      }
+    };
+
+    fetchProveedores();
+  }, []);
+
+  //Maneja la busqueda en tiempo real
+  const handleSearch = (query: string) => {
+    //el trim() elimina los espacios en blanco al principio y al final de la cadena
+    if(query.trim() === "") {// Si la búsqueda está vacía, mostramos todos los proveedores
+      setFilteredProveedores(proveedor); 
+    }else {
+      // Filtramos los proveedores que coinciden con la búsqueda
+      const filtered = proveedor.filter((proveedor) =>
+        proveedor.nombre.toLowerCase().includes(query.toLowerCase())
+      );
+      setFilteredProveedores(filtered);
+    }
+  };
+
   return (
     <div className="flex w-full h-screen">
       <Sidebar />
       <main className="flex-1 bg-white p-6 overflow-auto">
-        <Header />
+        <Header onSearch={handleSearch}/>
         {/* Título */}
         <h1 className="text-3xl font-semibold text-purple-400 text-center mt-23">
           Proveedores
         </h1>
+
+        {error && <p className="text-red-500 text-center mt-4">{error}</p>}
         
         {/* Contenedor de productos */}
         <div className="flex justify-center mt-10">
           {/* Grid para organizar las tarjetas */}
           <div className="flex flex-col gap-6 mt-8">
             {/* Recorremos cada proveedor */}
-            {proveedor.map((proveedor, i) => (
-              <ProveedorCard key={i} {...proveedor} />
+            {filteredProveedores.map((proveedor, i) => (
+              <ProveedorCard 
+                key={i}
+                imgSrc={proveedor.imgSrc}
+                // imgSrc={Rapeluches}
+                nombre={proveedor.nombre}
+                telefono={proveedor.telefono}
+                redes={proveedor.redes}
+               />
             ))}
           </div>
         </div>

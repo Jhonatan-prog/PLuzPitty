@@ -2,35 +2,15 @@ import { useState } from "react";
 import { Bell } from "lucide-react";
 import logo from "../../assets/iconoLuzPitty.png";
  
-const Header = () => {
-  // Aquí estamos guardando lo que el usuario escribe en el buscador
-  const [query, setQuery] = useState("");
- 
-  const handleSearch = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();// Esto evita que la página se reinicie cuando hacemos "Enter"
- 
-    if (!query.trim()) return;// El trim es un método que elimina los espacios en blanco al inicio y final de una cadena de texto, Si no escribiste nada, no hacemos la búsqueda
- 
-    try {
-      const response = await fetch(`/api/productos?search=${query}`);// Hacemos la petición de búsqueda a la API productos
- 
-      // Validar si es una respuesta JSON
-      const contentType = response.headers.get("content-type");
-      if (!response.ok) {
-        throw new Error(`Error: ${response.status}`);
-      }
-     
-      if (!contentType || !contentType.includes("application/json")) {
-        const text = await response.text(); // Leemos el contenido de la respuesta del servidor como texto plano
-        console.error("Respuesta inesperada:", text);
-        throw new Error("Respuesta no es JSON");
-      }
- 
-      const data = await response.json();//Si todo sale bien, sacamos los datos del JSON
-      console.log("Resultados:", data);
-    } catch (error) {
-      console.error("Error al buscar:", error);
-    }
+//Se agrega una prop onSearch al componente Header para que pueda enviar el texto al Dashboard
+const Header = ({onSearch}: {onSearch: (query: string) => void}) => {
+  const [query, setQuery] = useState("");// Estado para almacenar el texto del buscador
+
+                           //Especifica q el evento es un cambio, y que proviene de un elemento HTML de tipo input
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {// Maneja el evento de búsqueda
+    const value = e.target.value;// Obtenemos el valor del input
+    setQuery(value);// Actualizamos el estado del input
+    onSearch(value);// Llamamos a la función onSearch para enviar el texto al Dashboard
   };
  
   return (
@@ -39,12 +19,12 @@ const Header = () => {
       <img src={logo} alt="Logo Luz Pitty" className="h-15" />
  
       {/* Buscador */}
-      <form onSubmit={handleSearch} className="flex-1 max-w-xl mx-6">
+      <form className="flex-1 max-w-xl mx-6">
         <div className="relative">
           <input
             type="text"
             value={query}// Lo que hayamos escrito en el buscador
-            onChange={(e) => setQuery(e.target.value)}// Cada vez que escribimos, actualiza el valor
+            onChange={handleSearch}// Cuando escribamos algo en el buscador, se llamará a la función handleSearch
             placeholder="Buscar"
             className="w-full pl-10 pr-4 py-2 rounded-lg border border-black focus:outline-none focus:ring-2 focus:ring-purple-500"
           />

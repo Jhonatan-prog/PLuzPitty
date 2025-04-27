@@ -1,6 +1,6 @@
 type ProveedorProps ={
     imgSrc: string;
-    name: string;
-    Tel: string;
-    description: string;
+    nombre: string;
+    telefono: string;
+    redes: string;
   }
