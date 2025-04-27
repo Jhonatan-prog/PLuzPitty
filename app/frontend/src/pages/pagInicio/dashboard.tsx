@@ -13,6 +13,8 @@ import Block from "../../assets/Block.jpeg";
 import MarcadoBorr from "../../assets/MarcadoresBorrables.jpeg";
 import FolderArgoll from "../../assets/FolderArgollado.jpeg";
 import ColoresGig from "../../assets/ColoresJumbo.jpeg";
+import { useEffect, useState } from "react";
+import { producto } from "../../types/productsProps";
 
 const products = [//Lista de productos que vamos a mostrar
   { imgSrc: lonchera, name: "Lonchera", price: "30.000" },
@@ -30,11 +32,31 @@ const products = [//Lista de productos que vamos a mostrar
 ];
 
 export default function Dashboard() {
+  //const [product, setProductos] = useState<producto[]>([]);
+  const [filteredProductos, setFilteredProductos] = useState<producto[]>([]); //almacena los productos filtrados
+  // Agregar este useEffect
+  useEffect(() => {
+    setFilteredProductos(products); // Establecer los productos iniciales
+  }, []); // El array vacío significa que solo se ejecutará una vez al montar el componente
+  //Maneja la busqueda en tiempo real
+  const handleSearch = (query: string) => {
+    //el trim() elimina los espacios en blanco al principio y al final de la cadena
+    if(query.trim() === "") {// Si la búsqueda está vacía, mostramos todos los productos
+      setFilteredProductos(products);
+    }else {
+      // Filtramos los productos que coinciden con la búsqueda por nombre
+      const filtered = products.filter((productos) =>
+      productos.name.toLowerCase().includes(query.toLowerCase())
+      );
+      //se le asigna al filtro el filtro que acabamos de hacer por nombre
+      setFilteredProductos(filtered);
+    }
+  };
   return (
     <div className="flex w-full h-screen">
       <Sidebar />
       <main className="flex-1 bg-white p-6 overflow-auto">
-        <Header />
+        <Header onSearch={handleSearch}/>
         {/* Título */}
         <h1 className="text-3xl font-semibold text-purple-400 text-center mt-23">
           Productos
@@ -45,10 +67,10 @@ export default function Dashboard() {
         {/* Grid o cuadricula para organizar las tarjetas */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-8">
         {/* Recorremos cada producto de la lista y mostramos una tarjeta */} 
-        {products.map((product, i) => (
+        {filteredProductos.map((products, i) => (
           // Creamos una tarjeta (ProductCard) para cada producto
           // Usamos {...product} para pasar todos los datos como props
-          <ProductCard key={i} {...product} />
+          <ProductCard key={i} {...products} />
         ))}
         </div>
         </div>
