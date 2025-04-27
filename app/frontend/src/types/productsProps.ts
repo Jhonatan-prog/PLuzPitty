@@ -4,3 +4,4 @@ type producto = {
   price: string;
 };
   
+export type { producto };
