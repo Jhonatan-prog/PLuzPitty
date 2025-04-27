@@ -1,8 +1,10 @@
-// react
+// libs
 import { useState, useRef, useEffect } from "react";;
 import { v4 as uuidv4 } from 'uuid';
 // validation
 import { RTimeValidation } from "../../utils/validation/inputs";
+import { Request } from "../../api/requests";
+import { Auth } from "../../api/auth";
 // styles / types
 import { tailwindStyles as TSCSS} from "../../styles/styles.tailwind";
 import { LabelProps } from "../../types/compProps";
@@ -33,6 +35,15 @@ const RegisterFormComponent = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [passwordConfirmation, setPasswordConfirmation] = useState("");
+
+  const request = new Request('http://localhost:5000', {
+    NombreUsuario: name,
+    Contraseña: password,
+    Correo: email,
+    Telefono: "3113788092",
+    NombreRol: "EMPLEADO"
+  });
+  const auth = new Auth(request);
   
   // Inicialización para validación de inputs
   const RTV = new RTimeValidation();
@@ -60,13 +71,22 @@ const RegisterFormComponent = () => {
     });
   }, [])
 
-  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault()
     if (!validationComplete) {
-      e.preventDefault()
       return
     };
+    const response = await request.post('Usuario');
 
-  }
+    if (response && response.status >= 400) {
+      console.error("User could not be created, something went wrong.")
+      return;
+    }
+
+    await auth.login();
+
+    window.location.replace("http://localhost:5173/")
+   }
 
   return (
     <form action="" method="post" className={`${TSCSS.flexStart}`} onSubmit={handleSubmit}>
