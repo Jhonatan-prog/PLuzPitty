@@ -1,5 +1,7 @@
-// Routes
+
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import ProductoCard from "../src/pages/pagInicio/dashboard";
+import InvenatarioCard from "../src/pages/pagInventario/dashboard";
 import LoginPage from "./pages/auth/LoginPage";
 import RegisterPage from "./pages/auth/RegisterPage";
 import PasswordRecoveryPage from "./pages/auth/PasswordRecoveryPage";
@@ -17,9 +19,12 @@ const AppRoutes = () => {
                 <Route path="/forgot-password" element={<PasswordRecoveryPage />} />
                 <Route path="/reset-password" element={<PasswordResetPage />} />
                 <Route path="*" element={<div>404 Not Found</div>} />
+                <Route path="/inicio" element={<ProductoCard />} />
+                <Route path="/inventario" element={<InvenatarioCard/>} />
             </Routes>
         </Router>
     );
 }
 
 export default AppRoutes;
+
