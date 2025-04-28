@@ -1,12 +1,12 @@
 import { FaEdit } from "react-icons/fa";
 
-const ProveedorCard = ({ imgSrc, nombre, telefono, redes}: ProveedorProps) => {
+const ProveedorCard = ({ imagen, nombre, telefono, redes}: ProveedorProps) => {
   return (
     <div className="flex bg-yellow-50 border-2 border-yellow-300 rounded-xl p-4 shadow-md w-[650px] h-[200px] items-center justify-between hover:shadow-lg transition">
       
       {/* Imagen */}
       <div className="w-32 h-32 flex-shrink-0">
-        <img src={imgSrc} alt={nombre} className="w-full h-full object-contain" />
+        <img src={imagen} alt={nombre} className="w-full h-full object-contain" />
       </div>
 
       {/* Info del producto */}

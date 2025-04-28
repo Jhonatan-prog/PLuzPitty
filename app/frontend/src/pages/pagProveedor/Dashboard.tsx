@@ -2,20 +2,10 @@
 import Sidebar from "../../components/pagInicio/sidebar"; 
 import Header from "../../components/pagInicio/header";
 import { FaPlus } from "react-icons/fa";
-import Rapeluches from "../../assets/Rapeluches.jpg"
-import creamHela from "../../assets/CreamHelado.png"
-import Norma from "../../assets/Norma.png"
 import ProveedorCard from "../../components/pagProveedor/ProveedorCard";
 import { Link } from "react-router-dom";
 import { Request } from "../../api/requests";
 import { useEffect, useState } from "react";
-
-// Lista de productos que vamos a mostrar
-// const proveedor: ProveedorProps[] = [
-//   { imgSrc: Rapeluches, nombre: "Rapeluches", telefono: "319 780 6787"/*, description: "Empresa fabricante de peluches"*/ },
-//   { imgSrc: creamHela, nombre: "CreamHelado", telefono: "319 780 6787"/*, description: "Empresa fabricante y comercializadora de helados"*/ },
-//   { imgSrc: Norma, nombre: "Norma", telefono: "319 780 6787"/*, description: "Empresa fabricante de utiles escolares" */},
-// ];
 
 export default function Dashboard() {
   //almacena los proveedores
@@ -76,16 +66,19 @@ export default function Dashboard() {
           {/* Grid para organizar las tarjetas */}
           <div className="flex flex-col gap-6 mt-8">
             {/* Recorremos cada proveedor */}
-            {filteredProveedores.map((proveedor, i) => (
+          {filteredProveedores.length > 0 ? (
+            filteredProveedores.map((proveedor, i) => (
               <ProveedorCard 
                 key={i}
-                imgSrc={proveedor.imgSrc}
-                // imgSrc={Rapeluches}
+                imagen={proveedor.imagen}
                 nombre={proveedor.nombre}
                 telefono={proveedor.telefono}
                 redes={proveedor.redes}
                />
-            ))}
+            ))
+            ) : (
+              <p className="text-gray-500 text-center">No se encontraron coincidencias.</p>
+            )}
           </div>
         </div>
 

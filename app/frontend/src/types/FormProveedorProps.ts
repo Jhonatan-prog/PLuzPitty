@@ -5,7 +5,7 @@ export interface ProveedorFormValues {
     Telefono: string;
     Direccion: string;
     Redes: string;
-    imagen: File | null;
+    imagen: string | null;
   }
   
   export interface FormularioProductoProps {

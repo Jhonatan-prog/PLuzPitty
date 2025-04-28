@@ -1,5 +1,5 @@
 type ProveedorProps ={
-    imgSrc: string;
+    imagen: string;
     nombre: string;
     telefono: string;
     redes: string;

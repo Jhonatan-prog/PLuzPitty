@@ -3,14 +3,16 @@ import { Bell } from "lucide-react";
 import logo from "../../assets/iconoLuzPitty.png";
  
 //Se agrega una prop onSearch al componente Header para que pueda enviar el texto al Dashboard
-const Header = ({onSearch}: {onSearch: (query: string) => void}) => {
+const Header = ({onSearch}: {onSearch?: (query: string) => void}) => { //el onSearch? quiere decir que es opcional
   const [query, setQuery] = useState("");// Estado para almacenar el texto del buscador
 
                            //Especifica q el evento es un cambio, y que proviene de un elemento HTML de tipo input
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {// Maneja el evento de búsqueda
     const value = e.target.value;// Obtenemos el valor del input
     setQuery(value);// Actualizamos el estado del input
-    onSearch(value);// Llamamos a la función onSearch para enviar el texto al Dashboard
+    if (onSearch) {// Llama a onSearch solo si está definido
+      onSearch(value);// Llamamos a la función onSearch para enviar el texto al Dashboard
+    }
   };
  
   return (

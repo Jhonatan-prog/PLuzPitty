@@ -94,6 +94,7 @@ CREATE TABLE Proveedor (
     Telefono VARCHAR(15) NOT NULL,
     Direccion VARCHAR(100) NOT NULL,
     Redes varchar(60),
+    imagen varchar(255) not null
 );
 go
 -- Tabla intermedia ProductoProveedor (N:M)

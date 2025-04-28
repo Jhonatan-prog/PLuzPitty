@@ -1,7 +1,12 @@
 import React, { useState } from "react";
+import { Request } from "../../api/requests";
 import { ProveedorFormValues } from "../../types/FormProveedorProps";
+import { RTimeValidation } from "../../utils/validation/inputs";
+import Alert from "../Alertas/Alert";
+
 
 const AgregarProveedor: React.FC = () => {
+  
   //valores iniciales que tendra el proveedor
   const valorInicial: ProveedorFormValues = {
     Nit: "",
@@ -18,6 +23,9 @@ const AgregarProveedor: React.FC = () => {
   const [vistaPrevia, setVistaPrevia] = useState<string | null>(null);
   //Guardamos los errores
   const [errores, setErrores] = useState<{ [key: string]: string }>({});
+  const validator = new RTimeValidation();
+  const [alerta, setAlerta] = useState<{ mensaje: string; tipo: "exito" | "error" } | null>(null);
+
 
   const limpiarFormulario = () => {
     setFormData(valorInicial);
@@ -29,26 +37,18 @@ const AgregarProveedor: React.FC = () => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, files } = e.target;
 
-    // const sinEspeciales = /^[a-zA-Z0-9\s\-\/.]*$/;
-    const soloLetras = /^[a-zA-Z\s\-]*$/;
-    const soloNumeros = /^[0-9]*$/;
-    const letrasYNumeros = /^[a-zA-Z0-9\s]*$/;
-
     //guardamos la imagen y se muestra la vista previa
     if (type === "file" && files) {
       const file = files[0];
-      setFormData((prev) => ({ ...prev, imagen: file }));
+      setFormData((prev) => ({ ...prev, imagen: file.name }));// Guardamos el nombre del archivo
       setVistaPrevia(URL.createObjectURL(file));
       setErrores((prev) => ({ ...prev, imagen: "" }));
       return;
     }
 
-    //evita numeros y caracteres especiales
-    // if (!sinEspeciales.test(value)) return;
-    if (name === "Nit" && !letrasYNumeros.test(value)) return;
-    if (name === "Nombre" && !soloLetras.test(value)) return;
-    if (name === "NombreContacto" && !soloLetras.test(value)) return; 
-    if (name === "Telefono" && !soloNumeros.test(value)) return; 
+    if (name === "Nombre" && !validator.soloLetras(value)) return;
+    if (name === "NombreContacto" && !validator.soloLetras(value)) return; 
+    if (name === "Telefono" && !validator.soloNumeros(value)) return; 
 
     //Cuando tenemos el mensaje de campo requerido, y empezamos a copiar en dicho campo, se quita el mensaje de error
     if (errores[name]) {
@@ -62,30 +62,47 @@ const AgregarProveedor: React.FC = () => {
     }));
   };
 
-  const validarCampos = (): boolean => {
-    const nuevosErrores: { [key: string]: string } = {};
-    if (!formData.Nit) nuevosErrores.Nit = "Este campo es obligatorio";
-    if (!formData.Nombre) nuevosErrores.Nombre = "Este campo es obligatorio";
-    if (!formData.NombreContacto) nuevosErrores.NombreContacto = "Este campo es obligatorio";
-    if (!formData.Telefono) nuevosErrores.Telefono = "Este campo es obligatorio";
-    if (!formData.Direccion) nuevosErrores.Direccion = "Este campo es obligatorio";
-    if (!formData.Redes) nuevosErrores.Redes = "Este campo es obligatorio";
-    if (!formData.imagen) nuevosErrores.imagen = "La imagen es obligatoria";
+  const enviarProveedor = async (formData: ProveedorFormValues) => {
+    const request = new Request("http://localhost:5000", formData);
 
-    setErrores(nuevosErrores);
-    return Object.keys(nuevosErrores).length === 0;
-  };
+    try {
+
+      const response = await request.post("Proveedor/Insertar");
+      console.log("Respuesta del servidor:", formData);
+      if (response?.status === 200) {
+        console.log("Alerta de éxito:", alerta);
+      } else {
+        console.error("Error al agregar el proveedor:", alerta);      
+      }
+    } catch (error) {
+      console.error("Error al agregar el proveedor:", error);
+      
+    }
+  };    
 
   //Cuando le damos al boton agregar
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();//ayuda a que no se recargue la pag
-    if (validarCampos()) {
-      console.log("Formulario válido:", formData);
-      limpiarFormulario();
+
+    const nuevosErrores = validator.validarCamposProveedor(formData);
+
+    if (Object.keys(nuevosErrores).length > 0) {
+      setErrores(nuevosErrores); // Muestra los errores si los hay
+      return;
     }
+      try {
+        await enviarProveedor(formData); // Llama a la función para enviar los datos
+        setAlerta({ mensaje: "¡Proveedor agregado correctamente!", tipo: "exito" });// Muestra la alerta de éxito
+        limpiarFormulario(); 
+       } catch (error) {
+        setAlerta({ mensaje: "¡El proveedor NO se pudo agregar!", tipo: "error" });
+      }
   };
 
   return (
+    <> 
+    {alerta && <Alert mensaje={alerta.mensaje} tipo={alerta.tipo} />}
+
     <div className="min-h-screen flex items-center justify-center bg-white p-25">
       <div className="bg-white p-8 rounded-xl shadow-xl w-full max-w-4xl border border-gray-200 ">
         <h1 className="text-center text-4xl font-bold text-purple-400 mb-8">Agregar Proveedor</h1>
@@ -126,6 +143,7 @@ const AgregarProveedor: React.FC = () => {
             >
               Cancelar
             </button>
+            
             <button
               type="submit"
               className="bg-cyan-200 hover:bg-cyan-300 px-4 py-2 rounded-md"
@@ -136,6 +154,7 @@ const AgregarProveedor: React.FC = () => {
         </form>
       </div>
     </div>
+    </>
   );
 };
 
