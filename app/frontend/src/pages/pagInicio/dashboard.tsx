@@ -55,7 +55,7 @@ export default function Dashboard() {
   return (
     <div className="flex w-full h-screen">
       <Sidebar />
-      <main className="flex-1 bg-white p-6 overflow-auto">
+      <main className="flex-1 bg-white p-6">
         <Header onSearch={handleSearch}/>
         {/* Título */}
         <h1 className="text-3xl font-semibold text-purple-400 text-center mt-23">
