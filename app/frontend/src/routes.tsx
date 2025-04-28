@@ -11,7 +11,7 @@ const AppRoutes = () => {
     return (
         <Router>
             <Routes>
-                <Route path="/" element={<div>Home Page</div>} />
+                <Route path="/" element={<ProductoCard />} />
                 <Route path="/about" element={<div>About Page</div>} />
                 <Route path="/contact" element={<div>Contact Page</div>} />
                 <Route path="/login" element={<LoginPage />} />
@@ -19,7 +19,6 @@ const AppRoutes = () => {
                 <Route path="/forgot-password" element={<PasswordRecoveryPage />} />
                 <Route path="/reset-password" element={<PasswordResetPage />} />
                 <Route path="*" element={<div>404 Not Found</div>} />
-                <Route path="/inicio" element={<ProductoCard />} />
                 <Route path="/inventario" element={<InvenatarioCard/>} />
             </Routes>
         </Router>
