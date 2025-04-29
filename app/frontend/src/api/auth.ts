@@ -1,5 +1,5 @@
 import { User, LoginData } from "../types/user";
-import { logout } from "../features/auth/authSlice";
+import { logout as authLogout } from "../features/auth/authSlice";
 import { useAppDispatch } from "../hooks/useAppDispatch";
 import { Request } from "./requests";
 import Cookies from "js-cookie";
@@ -8,11 +8,13 @@ class Auth {
     request: Request;
     isAuthenticated: boolean;
     cred: LoginData | undefined;
+    dispatch: any;
 
     constructor(request: Request | undefined, cred?: LoginData) {
         this.request = request ? request : new Request('http://localhost:5000', {});
         this.isAuthenticated = false;
         this.cred = cred;
+        this.dispatch = useAppDispatch();
     }
 
     async login() {
@@ -41,11 +43,12 @@ class Auth {
 
     logout() {
         const AccessToken = Cookies.get("token");
-        const dispatch = useAppDispatch();
+
         if (AccessToken) {
             Cookies.remove("token")
         }
-        dispatch(logout())
+
+        this.dispatch(authLogout());
     }
 
     authenticated() {
