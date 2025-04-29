@@ -1,4 +1,6 @@
 import { User, LoginData } from "../types/user";
+import { logout } from "../features/auth/authSlice";
+import { useAppDispatch } from "../hooks/useAppDispatch";
 import { Request } from "./requests";
 import Cookies from "js-cookie";
 
@@ -39,9 +41,11 @@ class Auth {
 
     logout() {
         const AccessToken = Cookies.get("token");
+        const dispatch = useAppDispatch();
         if (AccessToken) {
             Cookies.remove("token")
         }
+        dispatch(logout())
     }
 
     authenticated() {
