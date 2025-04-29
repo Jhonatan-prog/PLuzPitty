@@ -39,8 +39,6 @@ class Auth {
         if (AccessToken) {
             Cookies.remove("token")
         }
-
-        window.location.replace("http://localhost:5173/login")
     }
 
     authenticated() {
