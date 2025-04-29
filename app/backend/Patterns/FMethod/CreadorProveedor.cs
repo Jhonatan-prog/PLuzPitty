@@ -6,17 +6,41 @@ using Microsoft.AspNetCore.Mvc;
 namespace app.backend.Patterns.FMethod
 {
     public abstract class CreadorProveedor : ICreadorProveedor {
-        protected string nombre;
         protected readonly ProveedorService _servicio;
+        protected List<Proveedor> librosProveedores;
+        protected List<Proveedor> articulosProveedores;
 
-        public CreadorProveedor(string nombre, ProveedorService servicio)
+        public CreadorProveedor(ProveedorService servicio)
         {
-            this.nombre = nombre;
-            
             _servicio = servicio;
+            this.librosProveedores = new List<Proveedor>();
+            this.articulosProveedores = new List<Proveedor>();
         }
 
-        public Proveedor crearProveedor() {
+        public abstract ActionResult<List<Proveedor>> consultarTodos();
+
+        public abstract Proveedor? obtenerInfo();
+
+        public abstract Proveedor? crearProveedor(Proveedor proveedor);
+
+        public abstract string metodoPago();
+    }
+
+    public class LibrosProveedor : CreadorProveedor // type
+    {
+        public LibrosProveedor(ProveedorService servicio) : base(servicio)
+        {
+        }
+
+        public override ActionResult<List<Proveedor>> consultarTodos() {
+            return _servicio.ConsultarTodos();
+        }
+
+        public override Proveedor? obtenerInfo() {
+            return null;
+        }
+
+        public override Proveedor? crearProveedor(Proveedor proveedor) {
             Proveedor nuevoProveedor = new Proveedor
             {
                 Nit = proveedor.Nit,
@@ -28,39 +52,16 @@ namespace app.backend.Patterns.FMethod
                 Imagen = proveedor.Imagen
             };
 
-            boolean ok = servicio.Insertar(nuevoProveedor);
+            bool ok = _servicio.Insertar(nuevoProveedor);
 
             if (!ok) {
                 throw new Exception("Error al insertar el proveedor en la base de datos.");
             }
 
-            this.proveedores.Add(nuevoProveedor);
+            this.librosProveedores.Add(nuevoProveedor);
 
             return nuevoProveedor;
         }
-
-        public abstract Proveedor? obtenerInfo();
-
-        public ActionResult<List<Proveedor>> consultarTodos() {
-            return _servicio.ConsultarTodos();
-        }
-
-        public abstract string metodoPago();
-    }
-
-    public class LibroProveedor : CreadorProveedor // type
-    {
-        public MPP(string nombre, ProveedorService servicio) : base(nombre, servicio)
-        {
-        }
-
-        public override Proveedor? obtenerInfo() {
-            return null;
-        }
-
-        /* public override ActionResult<List<Proveedor>> consultarTodos() {
-            return _servicio.ConsultarTodos();
-        } */
 
         public override string metodoPago() {
             return "Efectivo";
@@ -69,17 +70,40 @@ namespace app.backend.Patterns.FMethod
 
     public class ArticulosProveedor : CreadorProveedor
     {
-        public Penafargo(string nombre, ProveedorService servicio) : base(nombre, servicio)
+        public ArticulosProveedor(ProveedorService servicio) : base(servicio)
         {
+        }
+
+        public override ActionResult<List<Proveedor>> consultarTodos() {
+            return _servicio.ConsultarTodos();
         }
 
         public override Proveedor? obtenerInfo() {
             return null;
         }
 
-        /* public override ActionResult<List<Proveedor>> consultarTodos() {
-            return _servicio.ConsultarTodos();
-        } */
+        public override Proveedor? crearProveedor(Proveedor proveedor) {
+            Proveedor nuevoProveedor = new Proveedor
+            {
+                Nit = proveedor.Nit,
+                Nombre = proveedor.Nombre,
+                NombreContacto = proveedor.NombreContacto,
+                Telefono = proveedor.Telefono,
+                Direccion = proveedor.Direccion,
+                Redes = proveedor.Redes,
+                Imagen = proveedor.Imagen
+            };
+
+            bool ok = _servicio.Insertar(nuevoProveedor);
+
+            if (!ok) {
+                throw new Exception("Error al insertar el proveedor en la base de datos.");
+            }
+
+            this.articulosProveedores.Add(nuevoProveedor);
+
+            return nuevoProveedor;
+        }
 
         public override string metodoPago() {
             return "Efectivo";
