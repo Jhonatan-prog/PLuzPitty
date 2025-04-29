@@ -1,4 +1,6 @@
 import { User, LoginData } from "../types/user";
+import { logout as authLogout } from "../features/auth/authSlice";
+import { useAppDispatch } from "../hooks/useAppDispatch";
 import { Request } from "./requests";
 import Cookies from "js-cookie";
 
@@ -6,11 +8,13 @@ class Auth {
     request: Request;
     isAuthenticated: boolean;
     cred: LoginData | undefined;
+    dispatch: any;
 
     constructor(request: Request | undefined, cred?: LoginData) {
         this.request = request ? request : new Request('http://localhost:5000', {});
         this.isAuthenticated = false;
         this.cred = cred;
+        this.dispatch = useAppDispatch();
     }
 
     async login() {
@@ -27,20 +31,24 @@ class Auth {
         if (response && response.data) {
             const { token } = response.data;
             Cookies.set("token", token, { expires: 7 });
-        } else {
-            throw new Error("Invalid response from server");
+            return response.data;
         }
 
-        return response;
+        return {
+            data: undefined,
+            message: "400 Bad Request",
+            status: 400,
+        };
     }
 
     logout() {
         const AccessToken = Cookies.get("token");
+
         if (AccessToken) {
             Cookies.remove("token")
         }
 
-        window.location.replace("http://localhost:5173/login")
+        this.dispatch(authLogout());
     }
 
     authenticated() {
