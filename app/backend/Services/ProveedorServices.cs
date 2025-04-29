@@ -46,7 +46,7 @@ namespace app.backend.Services
             Proveedor? proveedor = null;
             _conexion.AbrirBd();
 
-            string consulta = "SELECT Nit, Nombre, NombreContacto, Telefono, Direccion, Redes, Imagen FROM Proveedor WHERE Nit = @Nit";
+            string consulta = "SELECT Nit, Nombre, NombreContacto, Telefono, Direccion, Redes, imagen FROM Proveedor WHERE Nit = @Nit";
             var parametros = new DbParameter[]
             {
                 _conexion.CreateParameter("@Nit", nit)
@@ -78,7 +78,7 @@ namespace app.backend.Services
             _conexion.AbrirBd();
 
             string sql = @"INSERT INTO Proveedor 
-                (Nit, Nombre, NombreContacto, Telefono, Direccion, Redes, Imagen)
+                (Nit, Nombre, NombreContacto, Telefono, Direccion, Redes, imagen)
                 VALUES (@Nit, @Nombre, @NombreContacto, @Telefono, @Direccion, @Redes, @imagen)";
 
             var parametros = new[]

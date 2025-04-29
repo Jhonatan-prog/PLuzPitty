@@ -42,3 +42,4 @@ app.MapControllers(); // Configura las rutas de los controladores para manejar l
 
 app.Run(); // Inicia la aplicación y comienza a escuchar las solicitudes entrantes.
 
+app.UseStaticFiles(); // Habilita la entrega de archivos estáticos, como imágenes y archivos CSS/JS, desde el directorio wwwroot.

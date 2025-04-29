@@ -13,7 +13,7 @@ import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 const menuItems = [// Estas son las opciones que tenemos en la barra lateral
   { label: "Productos", icon: productos, path: "/" },
   { label: "Inventario", icon: inventario, path: "/inventario" },
-  { label: "Proveedores", icon: proveedores, path: "/proveedores" },
+  { label: "Proveedores", icon: proveedores, path: "/Proveedor" },
   { label: "Estadísticas", icon: estadisticas, path: "/estadisticas"},
   { label: "Domicilios", icon: domicilios, path: "/domicilios" },
   { label: "Devoluciones", icon: devoluciones, path: "/devoluciones" },
@@ -22,7 +22,7 @@ const menuItems = [// Estas son las opciones que tenemos en la barra lateral
 
 const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(false);//Estado de inicio de la barra lateral cuando abrimos la página, si está true, aparece abierta, false, aparece cerrada
-
+  
   return (
     <div className={`fixed bg-[#e5dff3] h-full p-4 border-r-2 border-purple-700 ${isOpen ? "w-64" : "w-18"} top-0 left-0 z-60 transition-all duration-300`}>
       {/* Solo mostramos esta parte si la barra está abierta */}
