@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using app.backend.Services;
 using app.backend.Models;
+using app.backend.Patterns.FMethod;
 
 namespace app.backend.Controllers
 {
@@ -10,17 +11,23 @@ namespace app.backend.Controllers
     {
         private readonly ProveedorService _servicio;
 
+        private readonly LibroProveedor _libroProveedor;
+        private readonly ArticulosProveedor _articulosProveedor;
+
         public ProveedorController(ProveedorService servicio)
         {
             _servicio = servicio;
-        }
 
+            // Proveedores
+            _mpp = new LibroProveedor("MPP", servicio);
+            _penafargo = new Penafargo("Penafargo", servicio);
+        }
 
         //http://localhost:5000/api/Proveedor/ConsultarTodos
         [HttpGet("ConsultarTodos")]
         public ActionResult<List<Proveedor>> ConsultarTodos()
         {
-            return _servicio.ConsultarTodos();
+            return _penafargo.consultarTodos();
         }
         
         //http://localhost:5000/api/Proveedor/ConsultarPorNit/{nit}
