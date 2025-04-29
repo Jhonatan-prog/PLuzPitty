@@ -7,7 +7,7 @@ const tailwindStyles = {
     gridCenter: "grid place-items-center",
     fullSize: "w-full h-full",
     textCenter: "text-center",
-    absoluteCenter: "absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2",
+    xAxisCenter: "absolute left-1/2 transform -translate-x-1/2",
     container: "container mx-auto px-4",
     roundedFull: "rounded-full",
     shadow: "shadow-md",

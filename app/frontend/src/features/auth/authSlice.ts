@@ -12,6 +12,7 @@ export type InitialState = {
     isAuthenticated: boolean;
     loading: boolean;
     error: string | null;
+    serverError: boolean;
 }
 
 export const initialState: InitialState = {
@@ -19,6 +20,7 @@ export const initialState: InitialState = {
     isAuthenticated: false,
     loading: false,
     error: null,
+    serverError: false,
 }
 
 export const authSlice = createSlice({
@@ -37,10 +39,14 @@ export const authSlice = createSlice({
         loginFailure: (state, action: PayloadAction<string>) => {
             state.loading = false;
             state.error = action.payload;
+            state.serverError = true;
         },
         logout: (state) => {
             state.user = null;
             state.isAuthenticated = false;
+        },
+        setErrorServer: (state, action: PayloadAction<boolean>) => {
+            state.serverError = action.payload;
         }
     },
 });

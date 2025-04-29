@@ -27,11 +27,14 @@ class Auth {
         if (response && response.data) {
             const { token } = response.data;
             Cookies.set("token", token, { expires: 7 });
-        } else {
-            throw new Error("Invalid response from server");
+            return response.data;
         }
 
-        return response;
+        return {
+            data: undefined,
+            message: "400 Bad Request",
+            status: 400,
+        };
     }
 
     logout() {

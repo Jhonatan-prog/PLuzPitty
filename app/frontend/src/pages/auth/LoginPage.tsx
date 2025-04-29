@@ -9,12 +9,12 @@ const boxStyle = {
 const LoginPage = () => {
   return (
     <AuthLayout reference='login' title="Iniciar sesión"> 
-        <LFComponent />
+      <LFComponent />
 
-        <div className='flex flex-col'>
-          <p className={boxStyle.p}>¿No tienes una cuenta? <a href="/register" className={boxStyle.a}>Registrarse</a></p>
-          <p className={boxStyle.p}>¿Olvidastes tu contraseña? <a href="/forgot-password" className={boxStyle.a}>Recuperar</a></p>
-        </div>
+      <div className='flex flex-col'>
+        <p className={boxStyle.p}>¿No tienes una cuenta? <a href="/register" className={boxStyle.a}>Registrarse</a></p>
+        <p className={boxStyle.p}>¿Olvidastes tu contraseña? <a href="/forgot-password" className={boxStyle.a}>Recuperar</a></p>
+      </div>
     </AuthLayout>
   );
 }
