@@ -44,7 +44,7 @@ const RegisterFormComponent = () => {
     NombreRol: "EMPLEADO"
   });
   const auth = new Auth(request);
-  
+
   // Inicialización para validación de inputs
   const RTV = new RTimeValidation();
   const [validData, setValidData] = useState({
