@@ -54,9 +54,6 @@ const LoginFormComponent = () => {
       console.log("User not found.")
       return;
     }
-  // Supón que `response.data.NombreUsuario` devuelve el nombre del usuario
-  const data = await response.data; // si no está parseado aún
-  localStorage.setItem("nombreUsuario", data.NombreUsuario);
 
     window.location.replace("http://localhost:5173/")
    }
