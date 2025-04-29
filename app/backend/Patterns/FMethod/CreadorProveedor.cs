@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace app.backend.Patterns.FMethod
 {
+    // Esta clase es la clase base para los creadores de proveedores
+    // Aplicando el patrón Factory Method
     public abstract class CreadorProveedor : ICreadorProveedor {
         protected readonly ProveedorService _servicio;
         protected List<Proveedor> librosProveedores;
@@ -26,7 +28,7 @@ namespace app.backend.Patterns.FMethod
         public abstract string metodoPago();
     }
 
-    public class LibrosProveedor : CreadorProveedor // type
+    public class LibrosProveedor : CreadorProveedor
     {
         public LibrosProveedor(ProveedorService servicio) : base(servicio)
         {
