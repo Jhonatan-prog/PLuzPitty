@@ -58,6 +58,35 @@ class RTimeValidation implements IRTimeValidation {
 
         return handler[reference];
     }
+
+    public soloLetras(soloLetras: string) {
+        this.regex = /^[a-zA-Z\s\-]*$/; // Permite letras, espacios y guiones
+        return this.regex.test(soloLetras);
+    }
+
+    public soloNumeros(soloNumeros: string) {
+        this.regex = /^[0-9]*$/; 
+        return this.regex.test(soloNumeros);
+    }
+
+    public imagen(imagen: File | null) {
+        return imagen !== null; // Retorna true si la imagen no es null
+    }
+
+    public validarCamposProveedor(formData: any) {
+        const errores: { [key: string]: string } = {};
+
+        if ((!formData.Nit)) errores.Nit = "Este campo es obligatorio";
+        if ((!formData.Nombre)) errores.Nombre = "Este campo es obligatorio";
+        if ((!formData.NombreContacto)) errores.NombreContacto = "Este campo es obligatorio";
+        if ((!formData.Telefono)) errores.Telefono = "Este campo es obligatorio";
+        if ((!formData.Direccion)) errores.Direccion = "Este campo es obligatorio";
+        if ((!formData.Redes)) errores.Redes = "Este campo es obligatorio";
+        if (!this.imagen(formData.imagen)) errores.imagen = "La imagen es obligatoria";
+
+        return errores;
+    }
+    
 }
 
 export { RTimeValidation };

@@ -14,7 +14,7 @@ import { Auth } from "../../api/auth";
 const menuItems = [// Estas son las opciones que tenemos en la barra lateral
   { label: "Productos", icon: productos, path: "/" },
   { label: "Inventario", icon: inventario, path: "/inventario" },
-  { label: "Proveedores", icon: proveedores, path: "/proveedores" },
+  { label: "Proveedores", icon: proveedores, path: "/Proveedor" },
   { label: "Estadísticas", icon: estadisticas, path: "/estadisticas"},
   { label: "Domicilios", icon: domicilios, path: "/domicilios" },
   { label: "Devoluciones", icon: devoluciones, path: "/devoluciones" },

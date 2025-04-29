@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using app.backend.Services;
 using app.backend.Models;
+using app.backend.Patterns.FMethod;
 
 namespace app.backend.Controllers
 {
@@ -10,11 +11,17 @@ namespace app.backend.Controllers
     {
         private readonly ProveedorService _servicio;
 
+        private readonly LibrosProveedor _librosProveedor;
+        private readonly ArticulosProveedor _articulosProveedor;
+
         public ProveedorController(ProveedorService servicio)
         {
             _servicio = servicio;
-        }
 
+            // Creador de Proveedores (patrón de diseño Factory Method)
+            _librosProveedor = new LibrosProveedor(servicio);
+            _articulosProveedor = new ArticulosProveedor(servicio);
+        }
 
         //http://localhost:5000/api/Proveedor/ConsultarTodos
         [HttpGet("ConsultarTodos")]
@@ -40,10 +47,20 @@ namespace app.backend.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            bool resultado = _servicio.Insertar(proveedor);
-            if (resultado)
-                return Ok(new { message = "Proveedor registrado correctamente" });
-            return BadRequest(new { message = "No se pudo registrar el proveedor" });
+            string type = "libros".ToLower(); // proveedor.tipo.ToLower();
+            
+            ICreadorProveedor creador = type switch
+            {
+                "libros" => _librosProveedor,
+                "articulos" => _articulosProveedor,
+                _ => throw new ArgumentException("Tipo de proveedor no válido")
+            };
+
+            Proveedor prov = creador.crearProveedor(proveedor);
+
+            if (prov == null)
+                return BadRequest(new { message = "No se pudo registrar el proveedor" });
+            return Ok(new { message = "Proveedor registrado correctamente" });
         }
     }
 }
