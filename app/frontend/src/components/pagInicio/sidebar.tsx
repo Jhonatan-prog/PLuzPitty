@@ -27,7 +27,7 @@ const Sidebar = () => {
   const auth = new Auth(undefined);
 
   return (
-    <div className={`fixed bg-[#e5dff3] h-full p-4 border-r-2 border-purple-700 ${isOpen ? "w-64" : "w-18"} top-0 left-0 z-60 transition-all duration-300 relative h-screen`}>
+    <div className={`fixed bg-[#e5dff3] h-full p-4 border-r-2 border-purple-700 ${isOpen ? "w-64" : "w-18"} top-0 left-0 z-60 transition-all duration-300`}>
       {/* Solo mostramos esta parte si la barra está abierta */}
       <div className={"flex w-[100px] items-center gap-2 mt-1 transition-all duration-300 " + (isOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none")}>
         <img src={perfil} alt="Perfil" className="w-25 h-28 rounded-full z-20" />
@@ -48,7 +48,7 @@ const Sidebar = () => {
       <ul className=" absolute flex flex-col  gap-2 justify-center">
         {menuItems.map((item, index) => (
           <Link key={index} to={item.path} onClick={() => {if (item.path.toLowerCase().trim() === "/login") auth.logout()}}>
-            <li className="flex items-center text-sm text-black-400 cursor-pointer hover:text-purple-700 py-4">
+            <li className="flex items-center text-sm text-black-400 cursor-pointer hover:text-purple-700 py-3">
               <img src={item.icon} alt={item.label} className="w-8 h-8 justify-center" />
               {/* Solo mostramos el texto del ítem si la barra está abierta */}
               <span className={"w-[120px] ml-2 transition-all duration-300 " + (isOpen ? "opacity-100" : "opacity-0 pointer-events-none") }>{item.label}</span>

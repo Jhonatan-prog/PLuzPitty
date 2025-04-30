@@ -4,6 +4,10 @@ import { useAppDispatch } from "../hooks/useAppDispatch";
 import { Request } from "./requests";
 import Cookies from "js-cookie";
 
+// Esta función maneja la autenticación de los usuarios, incluyendo el inicio de sesión, cierre de sesión y verificación del estado de autenticación.
+// Utiliza cookies para almacenar el token de acceso y Redux para manejar el estado de autenticación en la aplicación.
+// Se creo con el fin de manejar la autenticación de los usuarios en la aplicación, 
+// permitiendo el inicio de sesión y el cierre de sesión, así como la verificación del estado de autenticación.
 class Auth {
     request: Request;
     isAuthenticated: boolean;
