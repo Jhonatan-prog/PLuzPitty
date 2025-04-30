@@ -97,9 +97,9 @@ export default function Dashboard() {
         </h1>
         {/*Contenedor de productos */}
         {/* Aquí vamos a colocar las tarjetas de productos */}
-        <div className="mt-10">
+        <div className="mt-10 px-10">
           {/* Grid o cuadricula para organizar las tarjetas */}
-          <div className="grid grid-cols-[repeat(auto-fit,minmax(18rem,1fr))] gap-6 mt-8">
+          <div className="grid grid-cols-[repeat(auto-fit,minmax(18rem,1fr))] place-items-center gap-6 mt-8 ">
             {/* Recorremos cada producto de la lista y mostramos una tarjeta */}
             {filteredProductos.map((products, i) => (
               // Creamos una tarjeta (ProductCard) para cada producto
