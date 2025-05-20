@@ -1,4 +1,4 @@
--- Script de Creación de Base de Datos para el MVP
+-- Script de Creaciï¿½n de Base de Datos para el MVP
 
 CREATE DATABASE luzPitty;
 go
@@ -8,7 +8,7 @@ go
 CREATE TABLE Usuario (
     IdUsuario int PRIMARY KEY ,
     NombreUsuario VARCHAR(100) NOT NULL,
-    Contraseña VARCHAR(50) NOT NULL,
+    Contraseï¿½a VARCHAR(50) NOT NULL,
     Correo VARCHAR(100) NOT NULL UNIQUE,
 	NombreRol varchar(50) NOT NULL,
 	Telefono int not null
@@ -61,7 +61,7 @@ CREATE TABLE Cliente (
     IdCliente INT PRIMARY KEY identity(1,1),
     Nombre VARCHAR(100) NOT NULL,
     Telefono VARCHAR(15) NOT NULL,
-	Dirección varchar(100) NOT NULL,
+	Direcciï¿½n varchar(100) NOT NULL,
 );
 go
 CREATE TABLE Factura (
@@ -128,7 +128,7 @@ CREATE TABLE Transaccion (
 
 go
 CREATE TABLE Devolucion (
-    IdDevolución INT PRIMARY KEY IDENTITY(1,1),
+    IdDevoluciï¿½n INT PRIMARY KEY IDENTITY(1,1),
     Motivo TEXT NOT NULL,
     Valor money NOT NULL,
 	CodigoProductoEntregado int not null,
