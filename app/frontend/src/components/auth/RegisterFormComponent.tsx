@@ -4,7 +4,6 @@ import { v4 as uuidv4 } from 'uuid';
 // validation
 import { RTimeValidation } from "../../utils/validation/inputs";
 import { Request } from "../../api/requests";
-import { Auth } from "../../api/auth";
 // styles / types
 import { tailwindStyles as TSCSS} from "../../styles/styles.tailwind";
 import { LabelProps } from "../../types/compProps";
@@ -43,7 +42,6 @@ const RegisterFormComponent = () => {
     Telefono: "3113788092",
     NombreRol: "EMPLEADO"
   });
-  const auth = new Auth(request);
 
   // Inicialización para validación de inputs
   const RTV = new RTimeValidation();
@@ -83,9 +81,7 @@ const RegisterFormComponent = () => {
       return;
     }
 
-    await auth.login();
-
-    window.location.replace("http://localhost:5173/")
+    window.location.replace("http://localhost:5173/login")
    }
 
   return (
