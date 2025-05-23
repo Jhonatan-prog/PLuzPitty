@@ -29,7 +29,7 @@ namespace app.backend.Models
         public string NombreRol { get; set; }
         
         [Required]
-        public int Telefono { get; set; }
+        public string Telefono { get; set; }
         
         // Navigation properties
         public virtual ICollection<UsuarioRol> UsuarioRoles { get; set; } = new HashSet<UsuarioRol>();

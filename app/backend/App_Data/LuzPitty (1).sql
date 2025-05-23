@@ -1,4 +1,8 @@
+
+
 -- Script de Creaci�n de Base de Datos para el MVP
+
+
 
 CREATE DATABASE luzPitty;
 go
@@ -6,12 +10,12 @@ USE luzPitty
 go
 
 CREATE TABLE Usuario (
-    IdUsuario int PRIMARY KEY ,
+    IdUsuario INT IDENTITY(1,1) PRIMARY KEY,
     NombreUsuario VARCHAR(100) NOT NULL,
-    Contrase�a VARCHAR(50) NOT NULL,
+    Contraseña VARCHAR(100) NOT NULL,
     Correo VARCHAR(100) NOT NULL UNIQUE,
-	NombreRol varchar(50) NOT NULL,
-	Telefono int not null
+    NombreRol VARCHAR(50) NOT NULL,
+    Telefono VARCHAR(20) NOT NULL  -- changed from INT to VARCHAR
 );
 go
 
@@ -61,7 +65,8 @@ CREATE TABLE Cliente (
     IdCliente INT PRIMARY KEY identity(1,1),
     Nombre VARCHAR(100) NOT NULL,
     Telefono VARCHAR(15) NOT NULL,
-	Direcci�n varchar(100) NOT NULL,
+	Dirección varchar(100) NOT NULL,
+
 );
 go
 CREATE TABLE Factura (
@@ -94,6 +99,7 @@ CREATE TABLE Proveedor (
     Telefono VARCHAR(15) NOT NULL,
     Direccion VARCHAR(100) NOT NULL,
     Redes varchar(60),
+    imagen varchar(255) not null
 );
 go
 -- Tabla intermedia ProductoProveedor (N:M)
@@ -151,11 +157,3 @@ CREATE TABLE HistorialDomicilio(
 	FOREIGN KEY (CcEmpleado) REFERENCES Usuario(IdUsuario),
 	FOREIGN KEY (IdCliente) REFERENCES Cliente(IdCliente)
 )
-
-
-
-
-
-
-
-

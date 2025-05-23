@@ -29,6 +29,10 @@ namespace app.backend.Models
         
         [StringLength(60)]
         public string Redes { get; set; }
+
+        [Required]
+        [StringLength(255)]
+        public string Imagen { get; set; }=null!;
         
         // Navigation property
         public virtual ICollection<ProductoProveedor> ProductoProveedores { get; set; } = new HashSet<ProductoProveedor>();

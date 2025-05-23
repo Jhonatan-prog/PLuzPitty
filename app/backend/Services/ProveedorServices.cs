@@ -20,7 +20,7 @@ namespace app.backend.Services
             var proveedores = new List<Proveedor>();
             _conexion.AbrirBd();
 
-            string consulta = "SELECT Nit, Nombre, NombreContacto, Telefono, Direccion, Redes FROM Proveedor";
+            string consulta = "SELECT Nit, Nombre, NombreContacto, Telefono, Direccion, Redes, imagen FROM Proveedor";
             var tabla = _conexion.EjecutarConsultaSql(consulta, null);
 
             foreach (DataRow fila in tabla.Rows)
@@ -32,7 +32,8 @@ namespace app.backend.Services
                     NombreContacto = fila["NombreContacto"].ToString() ?? "",
                     Telefono = fila["Telefono"].ToString() ?? "",
                     Direccion = fila["Direccion"].ToString() ?? "",
-                    Redes = fila["Redes"]?.ToString()
+                    Redes = fila["Redes"]?.ToString(),
+                    Imagen = fila["imagen"].ToString() ?? ""
                 });
             }
 
@@ -45,7 +46,7 @@ namespace app.backend.Services
             Proveedor? proveedor = null;
             _conexion.AbrirBd();
 
-            string consulta = "SELECT Nit, Nombre, NombreContacto, Telefono, Direccion, Redes FROM Proveedor WHERE Nit = @Nit";
+            string consulta = "SELECT Nit, Nombre, NombreContacto, Telefono, Direccion, Redes, imagen FROM Proveedor WHERE Nit = @Nit";
             var parametros = new DbParameter[]
             {
                 _conexion.CreateParameter("@Nit", nit)
@@ -63,7 +64,8 @@ namespace app.backend.Services
                     NombreContacto = fila["NombreContacto"].ToString() ?? "",
                     Telefono = fila["Telefono"].ToString() ?? "",
                     Direccion = fila["Direccion"].ToString() ?? "",
-                    Redes = fila["Redes"]?.ToString()
+                    Redes = fila["Redes"]?.ToString(),
+                    Imagen = fila["imagen"].ToString() ?? ""
                 };
             }
 
@@ -76,8 +78,8 @@ namespace app.backend.Services
             _conexion.AbrirBd();
 
             string sql = @"INSERT INTO Proveedor 
-                (Nit, Nombre, NombreContacto, Telefono, Direccion, Redes)
-                VALUES (@Nit, @Nombre, @NombreContacto, @Telefono, @Direccion, @Redes)";
+                (Nit, Nombre, NombreContacto, Telefono, Direccion, Redes, imagen)
+                VALUES (@Nit, @Nombre, @NombreContacto, @Telefono, @Direccion, @Redes, @imagen)";
 
             var parametros = new[]
             {
@@ -86,7 +88,8 @@ namespace app.backend.Services
                 _conexion.CreateParameter("@NombreContacto", proveedor.NombreContacto),
                 _conexion.CreateParameter("@Telefono", proveedor.Telefono),
                 _conexion.CreateParameter("@Direccion", proveedor.Direccion),
-                _conexion.CreateParameter("@Redes", proveedor.Redes ?? (object)DBNull.Value)
+                _conexion.CreateParameter("@Redes", proveedor.Redes ?? (object)DBNull.Value),
+                _conexion.CreateParameter("@imagen", proveedor.Imagen)
             };
 
             int filas = _conexion.EjecutarComandoSql(sql, parametros);
