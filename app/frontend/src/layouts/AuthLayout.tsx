@@ -1,7 +1,5 @@
 // react
 import { memo, useState, useEffect, Fragment } from 'react';
-// import { useAppSelector } from "../hooks/useAppDispatch";
-import { ErrorBlock } from '../utils/components/global';
 // styles, types
 import { AuthComponentPropsType } from '../types/compProps';
 import { tailwindStyles as TSCSS } from '../styles/styles.tailwind';
@@ -15,8 +13,6 @@ const AuthLayout = memo(
     const [isLoginPage, setIsLoginPage] = useState<boolean>(false);
     const [isLargeScreen, setIsLargeScreen] = useState<boolean>(false);
     const [authImageSrc, setAuthImageSrc] = useState<string | null>(null);
-
-    // const auth = useAppSelector((state) => state.auth);
 
     useEffect(() => {
       const handleResize = () => {
@@ -53,18 +49,15 @@ const AuthLayout = memo(
       <Fragment>
         {!isLoginPage && (
           <button
-            className="absolute back-button m-2.5 w-[45px] h-[45px] flex justify-start items-center pt-3 cursor-pointer"
+            className="absolute back-button top-0 left-0 m-2.5 w-[45px] h-[45px] flex justify-start items-center pt-3 cursor-pointer"
             onClick={backButtonEvent}
           >
             <img src={BButton} alt="back-button" />
           </button>
         )}
-        {/* {auth.serverError && (
-          <ErrorBlock errorMessage="¡Credenciales no válidas!" />
-        )} */}
 
         <div
-          className={`${TSCSS.gridCenter} md:grid-cols-2 h-[100vh] w-full overflow-hidden`}
+          className={`${TSCSS.gridCenter} md:grid-cols-2 w-full overflow-hidden`}
         >
           <div
             className={

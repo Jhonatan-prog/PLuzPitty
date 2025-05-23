@@ -46,8 +46,6 @@ const LoginFormComponent = () => {
     mensaje: string; 
     tipo: "exito" | "error" 
   } | null>(null);
-  
-  const [inputClicked, setInputClicked] = useState(false);
 
   const authentication = new Auth(undefined, {
     Correo: email,
