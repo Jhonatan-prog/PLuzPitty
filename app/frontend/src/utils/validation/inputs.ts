@@ -42,7 +42,6 @@ class RTimeValidation implements IRTimeValidation {
 
     public validationComplete(validData: any) {
         const validForm = Object.values(validData).every((value) => value === true);
-        console.log(validForm)
         return validForm
     }
 

@@ -1,11 +1,8 @@
-
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 
 const Alert: React.FC<{ mensaje: string; tipo: "exito" | "error" }> = ({ mensaje, tipo }) => {
   const [progreso, setProgreso] = useState(0);
   const [visible, setVisible] = useState(true);
-  const navigate = useNavigate(); // Inicializa el hook para redirigir
 
   useEffect(() => {
     if (progreso < 100) {
@@ -14,22 +11,21 @@ const Alert: React.FC<{ mensaje: string; tipo: "exito" | "error" }> = ({ mensaje
         
       }, 15); // Velocidad de avance de la barra (ajustable)
       return () => clearTimeout(timer);
-    } else {
-      // Cuando termine la carga, desaparecer
-      const timeout = setTimeout(() => {
-        setVisible(false);
-        navigate("/Proveedor");
-      }, 500);
-      return () => clearTimeout(timeout);
     }
+
+    // Cuando termine la carga, desaparecer
+    const timeout = setTimeout(() => {
+      setVisible(false);
+    }, 500);
+    return () => clearTimeout(timeout);
   }, [progreso]);
 
   if (!visible) return null; // Si no está visible, no renderiza nada
 
   const colores =
     tipo === "exito"
-      ? "bg-cyan-200 border-black-400 text-black-800"
-      : "bg-cyan-200 border-red-400 text-red-800";
+      ? "bg-cyan-200 border-black-400 text-[#1F271B]"
+      : "bg-cyan-200 border-red-400 text-[#1F271B]";
   const icono = tipo === "exito" ? "😊" : "😞";
 
   return (

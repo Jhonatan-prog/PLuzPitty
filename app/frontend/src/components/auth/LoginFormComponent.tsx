@@ -1,10 +1,10 @@
 // react
-import { useState, ChangeEventHandler } from "react";
+import { useState, Fragment, ChangeEventHandler } from "react";
 import { Auth } from "../../api/auth";
 import { v4 as uuidv4 } from 'uuid';
 import { useAppDispatch, useAppSelector } from "../../hooks/useAppDispatch";
 import { loginStart, loginSuccess, loginFailure } from '../../features/auth/authSlice';
-
+import Alert from "../Alertas/Alert";
 // styles
 import { tailwindStyles as TSCSS} from "../../styles/styles.tailwind";
 
@@ -42,6 +42,12 @@ const Checkbox = ({
 const LoginFormComponent = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [alerta, setAlerta] = useState<{ 
+    mensaje: string; 
+    tipo: "exito" | "error" 
+  } | null>(null);
+  
+  const [inputClicked, setInputClicked] = useState(false);
 
   const authentication = new Auth(undefined, {
     Correo: email,
@@ -60,41 +66,62 @@ const LoginFormComponent = () => {
 
     if (!response || response.status >= 400) {
       dispatch(loginFailure(response.message));
+
+      setAlerta(null);
+
+      setTimeout(() => {
+        setAlerta({
+          mensaje: "¡Credenciales no válidas!",
+          tipo: "error",
+        });
+      }, 0);
+
+      setEmail("");
+      setPassword("");
+
       console.error("User not found.")
+
       return;
     }
 
     dispatch(loginSuccess(response?.data));
 
     window.location.replace("http://localhost:5173/")
-   }
+  }
 
   return (
-    <form action="" method="post" className={`${TSCSS.flexStart}`} onSubmit={handleSubmit}>
-      <input 
-        type="email" 
-        name="email"
-        className={styles.input + " " + (!auth.serverError ? "" : invalidInput)}
-        placeholder="Correo"
-        onChange={(e) => {
-          setEmail(e.target.value as string);
-        }}
-        id={uuidv4()} />
-      <input 
-        type="password" 
-        name="password"
-        className={styles.input + " " + (!auth.serverError ? "" : invalidInput)}
-        placeholder="Contraseña"
-        onChange={(e) => {
-          setPassword(e.target.value as string);
-        }}
-        id={uuidv4()} />
+    <Fragment>
+      {alerta && <Alert mensaje={alerta.mensaje} tipo={alerta.tipo} />}
 
-      <Checkbox label="Recordar usuario" value={true} />
+      <form action="" method="post" className={`${TSCSS.flexStart}`} onSubmit={handleSubmit}>
+        <input 
+          type="email" 
+          name="email"
+          className={styles.input + " " + (!auth.serverError ? "" : invalidInput)}
+          placeholder="Correo"
+          value={email}
+          onChange={(e) => {
+            setEmail(e.target.value as string);
+          }}
+          onClick={() => dispatch(loginStart())}
+          id={uuidv4()} />
+        <input 
+          type="password" 
+          name="password"
+          className={styles.input + " " + (!auth.serverError ? "" : invalidInput)}
+          placeholder="Contraseña"
+          value={password}
+          onChange={(e) => {
+            setPassword(e.target.value as string);
+          }}
+          onClick={() => dispatch(loginStart())}
+          id={uuidv4()} />
 
-      <button type="submit" className={styles.button}>Ingresar</button>
-  
-    </form>
+        <Checkbox label="Recordar usuario" value={true} />
+
+        <button type="submit" className={styles.button}>Ingresar</button>
+      </form>
+    </Fragment>
   );
 };
 

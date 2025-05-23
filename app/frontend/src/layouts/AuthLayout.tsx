@@ -1,6 +1,6 @@
 // react
 import { memo, useState, useEffect, Fragment } from 'react';
-import { useAppSelector } from "../hooks/useAppDispatch";
+// import { useAppSelector } from "../hooks/useAppDispatch";
 import { ErrorBlock } from '../utils/components/global';
 // styles, types
 import { AuthComponentPropsType } from '../types/compProps';
@@ -16,7 +16,7 @@ const AuthLayout = memo(
     const [isLargeScreen, setIsLargeScreen] = useState<boolean>(false);
     const [authImageSrc, setAuthImageSrc] = useState<string | null>(null);
 
-    const auth = useAppSelector((state) => state.auth);
+    // const auth = useAppSelector((state) => state.auth);
 
     useEffect(() => {
       const handleResize = () => {
@@ -59,9 +59,9 @@ const AuthLayout = memo(
             <img src={BButton} alt="back-button" />
           </button>
         )}
-        {auth.serverError && (
+        {/* {auth.serverError && (
           <ErrorBlock errorMessage="¡Credenciales no válidas!" />
-        )}
+        )} */}
 
         <div
           className={`${TSCSS.gridCenter} md:grid-cols-2 h-[100vh] w-full overflow-hidden`}
