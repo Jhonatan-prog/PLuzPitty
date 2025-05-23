@@ -101,6 +101,22 @@ namespace app.backend.Services
                 return filas > 0;
         }
 
+        public string ObtenerNombreImagen(int id)
+        {
+            string sql = "SELECT imagen FROM Producto WHERE CodigoProducto = @id";
+            var parametros = new[] { _conexion.CreateParameter("@id", id) };
+             _conexion.AbrirBd();
+            var tabla = _conexion.EjecutarConsultaSql(sql, parametros);
+            _conexion.CerrarBd();
+
+            if (tabla.Rows.Count > 0)
+            {
+                return tabla.Rows[0]["imagen"]?.ToString();
+            }
+            return null!;
+        }
+
+
         public bool EliminarProducto(int id)
         {
             string sql = "DELETE FROM Producto WHERE CodigoProducto = @id";
