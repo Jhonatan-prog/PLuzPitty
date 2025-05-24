@@ -32,6 +32,7 @@ specifiers:
   react-icons: ^5.5.0
   react-redux: ^9.2.0
   react-router-dom: ^7.4.1
+  redux-persist: ^6.0.0
   tailwindcss: ^4.0.14
   typescript: ^5.8.2
   uuid: ^11.1.0
@@ -49,6 +50,7 @@ dependencies:
   react-icons: 5.5.0_react@19.0.0
   react-redux: 9.2.0_cmnynwxg3ky26emhk6apxalvqe
   react-router-dom: 7.4.1_upmzqgzhjrquwzo2dphtigtdgi
+  redux-persist: 6.0.0_react@19.0.0
   tailwindcss: 4.0.14
   uuid: 11.1.0
 
@@ -3049,6 +3051,18 @@ packages:
   /react/19.0.0:
     resolution: {integrity: sha512-V8AVnmPIICiWpGfm6GLzCR/W5FXLchHop40W4nXBmdlEceh16rCN8O8LNWm5bh5XUX91fh7KpA+W0TgMKmgTpQ==}
     engines: {node: '>=0.10.0'}
+    dev: false
+
+  /redux-persist/6.0.0_react@19.0.0:
+    resolution: {integrity: sha512-71LLMbUq2r02ng2We9S215LtPu3fY0KgaGE0k8WRgl6RkqxtGfl7HUozz1Dftwsb0D/5mZ8dwAaPbtnzfvbEwQ==}
+    peerDependencies:
+      react: '>=16'
+      redux: '>4.0.0'
+    peerDependenciesMeta:
+      react:
+        optional: true
+    dependencies:
+      react: 19.0.0
     dev: false
 
   /redux-thunk/3.1.0_redux@5.0.1:

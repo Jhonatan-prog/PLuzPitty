@@ -17,7 +17,7 @@ const tailwindStyles = {
     auth: {
         form: "flex items-start justify-start flex-col gap-2",
         label: "text-2xl",
-        input: "w-full h-12 bg-gray-300 min-w-80 my-[.625em] outline-none rounded-[.625rem] px-2 focus:border-3 focus:border-gray-400 text-[1.257rem] placeholder:text-[1.257rem] placeholder:font-medium",
+        input: "w-full h-12 bg-gray-300 min-w-80 my-[.625em] outline-none rounded-[.625rem] px-2 focus:border-3 focus:border-gray-400 text-[1.257rem] placeholder:text-[1.257rem] placeholder:font-medium transition",
         button: "transition duration-400 min-w-80 mt-4 my-2 tracking-wide border-none text-[1.257rem] font-medium py-2 px-4 rounded w-full text-gray-600 bg-[#95D9DA] hover:bg-[#68c8ca] cursor-pointer",
     }
 };

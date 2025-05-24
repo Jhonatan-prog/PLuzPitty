@@ -62,6 +62,8 @@ const LoginFormComponent = () => {
 
     const response = await authentication.login();
 
+    console.log(response)
+
     if (!response || response.status >= 400) {
       dispatch(loginFailure(response.message));
 
