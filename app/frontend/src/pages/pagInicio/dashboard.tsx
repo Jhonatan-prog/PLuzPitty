@@ -16,6 +16,7 @@ import ColoresGig from '../../assets/ColoresJumbo.jpeg';
 import { useEffect, useState } from 'react';
 import { producto } from '../../types/productsProps';
 
+import Cookies from "js-cookie";
 import { useAppSelector } from '../../hooks/useAppDispatch';
 import { useNavigate } from "react-router-dom";
 

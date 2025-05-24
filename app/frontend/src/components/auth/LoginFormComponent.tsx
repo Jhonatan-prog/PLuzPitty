@@ -12,29 +12,30 @@ const styles = TSCSS.auth;
 const invalidInput = "border-solid border-3 border-red-300 focus:border-red-300";
 
 const Checkbox = ({ 
-    label, value, onChange 
+    label, useSt, onChange 
   }: { 
     label:string, 
-    value: boolean, 
+    useSt: {
+      checked: boolean;
+      setChecked: React.Dispatch<React.SetStateAction<boolean>>
+    }, 
     onChange?: ChangeEventHandler<HTMLInputElement>
   }) => {
-
-  const [checked, setChecked] = useState(value);
 
   return (
     <label className="mt-3 flex items-center text-gray-600 text-lg font-medium">
       <input 
-        className="mr-2 cursor-pointer" 
+        className="mr-2 mb-[2px] cursor-pointer w-4 h-4 bg-gray-100 border-gray-300 rounded ring-[#95D9DA] focus:ring-[#95D9DA]" 
         type="checkbox" 
-        checked={checked} 
+        checked={useSt.checked} 
         onChange={() => {
-            setChecked(!checked);
+            useSt.setChecked(!useSt.checked);
 
             if (onChange) {
               return onChange;
             }
           }} />
-      {label}
+      <span>{label}</span>
     </label>
   );
 };
@@ -42,6 +43,13 @@ const Checkbox = ({
 const LoginFormComponent = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [checked, setChecked] = useState(true);
+
+  const useSt = {
+    checked, 
+    setChecked
+  }
+
   const [alerta, setAlerta] = useState<{ 
     mensaje: string; 
     tipo: "exito" | "error" 
@@ -60,9 +68,7 @@ const LoginFormComponent = () => {
 
     dispatch(loginStart());
 
-    const response = await authentication.login();
-
-    console.log(response)
+    const response = await authentication.login(useSt.checked);
 
     if (!response || response.status >= 400) {
       dispatch(loginFailure(response.message));
@@ -117,7 +123,7 @@ const LoginFormComponent = () => {
           onClick={() => dispatch(loginStart())}
           id={uuidv4()} />
 
-        <Checkbox label="Recordar usuario" value={true} />
+        <Checkbox label="Recordar usuario" useSt={useSt} />
 
         <button type="submit" className={styles.button}>Ingresar</button>
       </form>
