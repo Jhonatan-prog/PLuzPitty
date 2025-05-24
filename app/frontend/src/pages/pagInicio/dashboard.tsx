@@ -16,6 +16,9 @@ import ColoresGig from '../../assets/ColoresJumbo.jpeg';
 import { useEffect, useState } from 'react';
 import { producto } from '../../types/productsProps';
 
+import { useAppSelector } from '../../hooks/useAppDispatch';
+import { useNavigate } from "react-router-dom";
+
 const products = [
   //Lista de productos que vamos a mostrar
   { imgSrc: lonchera, name: 'Lonchera', price: '30.000' },
@@ -66,7 +69,15 @@ const products = [
 
 export default function Dashboard() {
   //const [product, setProductos] = useState<producto[]>([]);
+  const auth = useAppSelector((state) => state.auth);
+  const navigate = useNavigate();
+
+  if (!auth.isAuthenticated) {
+    navigate('/login')
+  }
+
   const [filteredProductos, setFilteredProductos] = useState<producto[]>([]); //almacena los productos filtrados
+  
   // Agregar este useEffect
   useEffect(() => {
     setFilteredProductos(products); // Establecer los productos iniciales
