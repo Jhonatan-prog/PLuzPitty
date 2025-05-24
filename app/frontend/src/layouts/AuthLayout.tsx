@@ -5,6 +5,8 @@ import { useAppSelector } from '../hooks/useAppDispatch';
 // styles, types
 import { AuthComponentPropsType } from '../types/compProps';
 import { tailwindStyles as TSCSS } from '../styles/styles.tailwind';
+import { decodeJwtPayload } from '../utils/encode';
+import Cookies from "js-cookie";
 // images
 import Logo from '../assets/icon-rmBg.png';
 import BButton from '../assets/back-button.svg';
@@ -47,7 +49,9 @@ const AuthLayout = memo(
     }, []);
 
     if (auth.isAuthenticated) {
-      children = <p className='my-4 text-xl'>Actualmente te encuentras autenticado en <br/> la aplicación.</p>
+      const email = decodeJwtPayload(Cookies.get("token")).unique_name
+
+      children = <p className='my-4 text-xl'>Actualmente te encuentras autenticado en <br/> la aplicación con el correo: "{email}".</p>
 
       setTimeout(() => {
         navigate('/')
