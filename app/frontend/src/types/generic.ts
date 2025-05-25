@@ -19,4 +19,5 @@ interface Fetch {
     error: Error;
 }
 
+
 export { Fetch, Error as ErrorObj };
