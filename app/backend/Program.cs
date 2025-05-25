@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Builder; // Importa el espacio de nombres necesario p
 using Microsoft.Extensions.DependencyInjection; // Importa el espacio de nombres necesario para configurar los servicios de la aplicación.
 using Microsoft.Extensions.Hosting; // Importa el espacio de nombres necesario para trabajar con diferentes entornos (desarrollo, producción, etc.).
 using app.backend.Services; // Importa el espacio de nombres donde se encuentran los servicios personalizados de la aplicación.
+using Microsoft.Extensions.FileProviders;
+using System.IO;
 
 var builder = WebApplication.CreateBuilder(args); // Crea un constructor para configurar la aplicación web ASP.NET Core.
 
@@ -30,6 +32,17 @@ if (app.Environment.IsDevelopment()) // Verifica si la aplicación está en el e
     app.UseDeveloperExceptionPage(); // Habilita una página de excepción detallada, útil para depurar errores durante el desarrollo.
 }
 
+app.UseStaticFiles(new StaticFileOptions
+{
+    // Indica la ubicación física de la carpeta de imágenes dentro del proyecto.
+    FileProvider = new PhysicalFileProvider(
+        // Obtiene el directorio actual de la aplicación y lo combina con la ruta a "wwwroot/imagenes"
+        Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "imagenes")),
+    // Define el prefijo de la URL que se usará para acceder a estos archivos desde el navegador.
+    // En este caso, los archivos de la carpeta "imagenes" estarán disponibles en la ruta "/imagenes" de la URL.
+    RequestPath = "/imagenes"
+}); // Habilita la entrega de archivos estáticos, como imágenes y archivos CSS/JS, desde el directorio wwwroot.
+
 app.UseHttpsRedirection(); // Fuerza la redirección de las solicitudes HTTP a HTTPS para mejorar la seguridad.
 
 app.UseRouting();
@@ -38,8 +51,11 @@ app.UseCors("AllowAllOrigins"); // Aplica la política de CORS que permite solic
 
 app.UseAuthorization(); // Habilita el middleware de autorización, necesario para proteger rutas que requieren autenticación o autorización.
 
+app.UseStaticFiles(); // para wwwroot en general
+
 app.MapControllers(); // Configura las rutas de los controladores para manejar las solicitudes HTTP.
 
 app.Run(); // Inicia la aplicación y comienza a escuchar las solicitudes entrantes.
 
-app.UseStaticFiles(); // Habilita la entrega de archivos estáticos, como imágenes y archivos CSS/JS, desde el directorio wwwroot.
+
+
