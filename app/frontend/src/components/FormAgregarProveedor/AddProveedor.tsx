@@ -102,8 +102,7 @@ const AgregarProveedor: React.FC = () => {
     }
       try {
         await enviarProveedor(formData); // Llama a la función para enviar los datos
-        setAlerta({ mensaje: "¡Proveedor agregado correctamente!", tipo: "exito" });// Muestra la alerta de éxito
-        limpiarFormulario(); 
+        setAlerta({ mensaje: "¡Proveedor agregado correctamente!", tipo: "exito" });// Muestra la alerta de éxito 
        } catch (error) {
         setAlerta({ mensaje: "¡El proveedor NO se pudo agregar!", tipo: "error" });
       }
@@ -127,7 +126,7 @@ const AgregarProveedor: React.FC = () => {
 
   return (
     <> 
-    {alerta && <Alert mensaje={alerta.mensaje} tipo={alerta.tipo} />}
+    {alerta && <Alert mensaje={alerta.mensaje} tipo={alerta.tipo} redirectTo="/Proveedor"/>}
 
     <div className="min-h-screen flex items-center justify-center bg-white p-25">
       <div className="bg-white p-8 rounded-xl shadow-xl w-full max-w-4xl border border-gray-200 ">

@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-const Alert: React.FC<{ mensaje: string; tipo: "exito" | "error" }> = ({ mensaje, tipo }) => {
+const Alert: React.FC<{ mensaje: string; tipo: "exito" | "error"; redirectTo?: string;}> = ({ mensaje, tipo, redirectTo }) => {
   const [progreso, setProgreso] = useState(0);
   const [visible, setVisible] = useState(true);
   const navigate = useNavigate(); // Inicializa el hook para redirigir
@@ -18,11 +18,14 @@ const Alert: React.FC<{ mensaje: string; tipo: "exito" | "error" }> = ({ mensaje
       // Cuando termine la carga, desaparecer
       const timeout = setTimeout(() => {
         setVisible(false);
-        navigate("/Proveedor");
+        // Solo navega si se proporcionó una ruta
+        if (redirectTo) {
+          navigate(redirectTo);
+        }
       }, 500);
       return () => clearTimeout(timeout);
     }
-  }, [progreso]);
+  }, [progreso, navigate, redirectTo]);
 
   if (!visible) return null; // Si no está visible, no renderiza nada
 
