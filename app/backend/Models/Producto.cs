@@ -7,8 +7,8 @@ namespace app.backend.Models
     public class Producto
     {
         [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int CodigoProducto { get; set; }
+        [StringLength(100)]
+        public string CodigoProducto { get; set; }
         
         [Required]
         [StringLength(100)]

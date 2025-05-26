@@ -50,7 +50,7 @@ CREATE TABLE UsuarioRol (
 );
 go
 CREATE TABLE Producto (
-    CodigoProducto INT PRIMARY KEY IDENTITY(1,1),
+    CodigoProducto VARCHAR(100) PRIMARY KEY,
     Nombre VARCHAR(100) NOT NULL,
     Descripcion TEXT,
     VlrUnitario money NOT NULL,
@@ -86,7 +86,7 @@ go
 --Tabla Intermedia FacturaProducto
 CREATE TABLE FacturaProducto (
     IdFactura VARCHAR(100),
-    CodigoProducto INT,
+    CodigoProducto VARCHAR(100),
     PRIMARY KEY (IdFactura, CodigoProducto),
     FOREIGN KEY (IdFactura) REFERENCES Factura(IdFactura),
     FOREIGN KEY (CodigoProducto) REFERENCES Producto(CodigoProducto)
@@ -105,7 +105,7 @@ go
 -- Tabla intermedia ProductoProveedor (N:M)
 CREATE TABLE ProductoProveedor (
     Nit VARCHAR(100),
-    CodigoProducto  int,
+    CodigoProducto  VARCHAR(100),
     PRIMARY KEY (Nit, CodigoProducto),
     FOREIGN KEY (Nit) REFERENCES Proveedor(Nit),
     FOREIGN KEY (CodigoProducto) REFERENCES Producto(CodigoProducto)
@@ -118,7 +118,7 @@ CREATE TABLE Inventario (
 	NombreProducto varchar(60) not null,
     DescripcionProducto text,
 	Estado CHAR(2) NOT NULL CHECK (Estado IN ('Si', 'No')),
-	CodigoProducto INT NOT NULL,
+	CodigoProducto VARCHAR(100) NOT NULL,
     FOREIGN KEY (CodigoProducto) REFERENCES Producto(CodigoProducto)
 );
 go
@@ -134,7 +134,7 @@ CREATE TABLE Transaccion (
 
 go
 CREATE TABLE Devolucion (
-    IdDevoluci�n INT PRIMARY KEY IDENTITY(1,1),
+    IdDevolucion INT PRIMARY KEY IDENTITY(1,1),
     Motivo TEXT NOT NULL,
     Valor money NOT NULL,
 	CodigoProductoEntregado int not null,

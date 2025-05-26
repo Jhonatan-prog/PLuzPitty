@@ -127,7 +127,7 @@ const AgregarProveedor: React.FC = () => {
 
   return (
     <> 
-    {alerta && <Alert mensaje={alerta.mensaje} tipo={alerta.tipo} />}
+    {alerta && <Alert mensaje={alerta.mensaje} tipo={alerta.tipo} redirectTo="/Proveedor"/>}
 
     <div className="min-h-screen flex items-center justify-center bg-white p-25">
       <div className="bg-white p-8 rounded-xl shadow-xl w-full max-w-4xl border border-gray-200 ">
