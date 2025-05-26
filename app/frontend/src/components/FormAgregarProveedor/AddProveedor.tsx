@@ -102,8 +102,7 @@ const AgregarProveedor: React.FC = () => {
     }
       try {
         await enviarProveedor(formData); // Llama a la función para enviar los datos
-        setAlerta({ mensaje: "¡Proveedor agregado correctamente!", tipo: "exito" });// Muestra la alerta de éxito
-        limpiarFormulario(); 
+        setAlerta({ mensaje: "¡Proveedor agregado correctamente!", tipo: "exito" });// Muestra la alerta de éxito 
        } catch (error) {
         setAlerta({ mensaje: "¡El proveedor NO se pudo agregar!", tipo: "error" });
       }

@@ -14,6 +14,7 @@ import MarcadoBorr from "../../assets/MarcadoresBorrables.jpeg";
 import FolderArgoll from "../../assets/FolderArgollado.jpeg";
 import ColoresGig from "../../assets/ColoresJumbo.jpeg";
 import { FaPlus } from "react-icons/fa";
+import { Link } from "react-router-dom";
 
 // Lista de productos que vamos a mostrar
 const products: InventoryCardProps[] = [
@@ -54,9 +55,11 @@ export default function Dashboard() {
         </div>
 
         {/* Botón flotante de agregar */}
-        <button className="fixed bottom-8 right-8 bg-purple-400 hover:bg-purple-500 text-purple p-4 rounded-full shadow-lg">
+        <Link to="/Add">
+          <button className="fixed bottom-8 right-8 bg-cyan-300 hover:bg-cyan-500 text-cyan-800 p-4 rounded-full shadow-lg">
             <FaPlus size={24} />
-        </button>
+          </button>
+        </Link>
       </main>
     </div>
   );
