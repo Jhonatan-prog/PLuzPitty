@@ -61,7 +61,7 @@ export default function Dashboard() {
 
         {error && <p className="text-red-500 text-center mt-4">{error}</p>}
         
-        {/* Contenedor de productos */}
+        {/* Contenedor de proveedores */}
         <div className="flex justify-center mt-10">
           {/* Grid para organizar las tarjetas */}
           <div className="flex flex-col gap-6 mt-8">

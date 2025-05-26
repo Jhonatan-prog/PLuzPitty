@@ -59,7 +59,10 @@ const AgregarProveedor: React.FC = () => {
 
     if (name === "Nombre" && !validator.soloLetras(value)) return;
     if (name === "NombreContacto" && !validator.soloLetras(value)) return; 
-    if (name === "Telefono" && !validator.soloNumeros(value)) return; 
+    if (name === "Telefono"){
+      if(!validator.soloNumeros(value)) return;
+      if(value.length > 10) return; // Limita el número de caracteres a 10
+    } 
 
     //Cuando tenemos el mensaje de campo requerido, y empezamos a copiar en dicho campo, se quita el mensaje de error
     if (errores[name]) {
@@ -102,7 +105,8 @@ const AgregarProveedor: React.FC = () => {
     }
       try {
         await enviarProveedor(formData); // Llama a la función para enviar los datos
-        setAlerta({ mensaje: "¡Proveedor agregado correctamente!", tipo: "exito" });// Muestra la alerta de éxito 
+        setAlerta({ mensaje: "¡Proveedor agregado correctamente!", tipo: "exito" });// Muestra la alerta de éxito
+         
        } catch (error) {
         setAlerta({ mensaje: "¡El proveedor NO se pudo agregar!", tipo: "error" });
       }
