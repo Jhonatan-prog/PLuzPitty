@@ -1,8 +1,8 @@
 
 type InventoryCardProps ={
-    imgSrc: string;
-    name: string;
-    description: string;
+    imagen: string;
+    nombre: string;
+    descripcion: string;
     stock: number;
   }
   
