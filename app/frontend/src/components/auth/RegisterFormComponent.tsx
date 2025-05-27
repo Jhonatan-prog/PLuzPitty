@@ -9,6 +9,7 @@ import Alert from "../Alertas/Alert";
 import { tailwindStyles as TSCSS} from "../../styles/styles.tailwind";
 import { LabelProps } from "../../types/compProps";
 import { IT } from '../../types/validation/inputs';
+import { useNavigate } from "react-router-dom";
 
 const styles = TSCSS.auth;
 const invalidInput = "border-solid border-3 border-red-300 focus:border-red-300";
@@ -28,6 +29,8 @@ const Label = ({ reference, message, isValid, userInput }: LabelProps) => {
 }
 
 const RegisterFormComponent = () => {
+  const navigate = useNavigate();
+
   const $passwordInput = useRef<HTMLInputElement>(null);
   const [onFocus, setOnFocus] = useState<boolean>(false);
 
@@ -119,7 +122,7 @@ const RegisterFormComponent = () => {
     });
 
     setTimeout(() => {
-      window.location.replace("http://localhost:5173/login")
+      navigate("/login")
     }, 2500);
   }
 

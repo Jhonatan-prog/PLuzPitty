@@ -1,5 +1,6 @@
 // react
 import { useState, Fragment, ChangeEventHandler } from "react";
+import { useNavigate } from "react-router-dom";
 import { Auth } from "../../api/auth";
 import { v4 as uuidv4 } from 'uuid';
 import { useAppDispatch, useAppSelector } from "../../hooks/useAppDispatch";
@@ -44,6 +45,8 @@ const LoginFormComponent = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [checked, setChecked] = useState(true);
+
+  const navigate = useNavigate();
 
   const useSt = {
     checked, 
@@ -92,7 +95,7 @@ const LoginFormComponent = () => {
 
     dispatch(loginSuccess(response?.data));
 
-    window.location.replace("http://localhost:5173/")
+    navigate("/")
   }
 
   return (

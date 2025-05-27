@@ -14,7 +14,6 @@ import AuthImage from '../assets/auth-image.png';
 
 const AuthLayout = memo(
   ({ title, reference, children }: AuthComponentPropsType) => {
-    const [isLoginPage, setIsLoginPage] = useState<boolean>(false);
     const [isLargeScreen, setIsLargeScreen] = useState<boolean>(false);
     const [authImageSrc, setAuthImageSrc] = useState<string | null>(null);
 
@@ -32,11 +31,6 @@ const AuthLayout = memo(
           });
         }
       };
-
-      const page = window.location.pathname.split('/').pop();
-      if (page === 'login') {
-        setIsLoginPage(true);
-      }
 
       // Initial check
       handleResize();
@@ -64,7 +58,7 @@ const AuthLayout = memo(
 
     return (
       <Fragment>
-        {!isLoginPage && (
+        {reference.trim().toLocaleLowerCase() !== 'login' && (
           <button
             className="absolute back-button top-0 left-0 m-2.5 w-[45px] h-[45px] flex justify-start items-center pt-3 cursor-pointer"
             onClick={backButtonEvent}
