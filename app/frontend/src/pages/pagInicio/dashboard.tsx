@@ -4,11 +4,20 @@ import ProductCard from '../../components/pagInicio/productoCard';
 import { useEffect, useState } from 'react';
 import { producto } from '../../types/productsProps';
 import { Request } from "../../api/requests";
+import { useNavigate } from 'react-router-dom';
+import { useAppSelector } from '../../hooks/useAppDispatch';
 
 export default function Dashboard() {
   //almacena los productos
   const [producto, setProductos] = useState<producto[]>([]);
   const [error, setError] = useState<string | null>(null);
+
+  const auth = useAppSelector((state) => state.auth);
+  const navigate = useNavigate();
+
+  if (!auth.isAuthenticated) {
+    navigate('/login')
+  }
 
   const [filteredProductos, setFilteredProductos] = useState<producto[]>([]); //almacena los productos filtrados
   
