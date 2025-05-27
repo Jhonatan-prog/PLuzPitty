@@ -1,75 +1,17 @@
 import Sidebar from '../../components/pagInicio/sidebar';
 import Header from '../../components/pagInicio/header';
 import ProductCard from '../../components/pagInicio/productoCard';
-import lonchera from '../../assets/lonchera.png';
-import cuaderno from '../../assets/cuaderno.png';
-import lienzo from '../../assets/lienzo.png';
-import cartuchera from '../../assets/cartuchera.png';
-import BoligrafoKiut from '../../assets/BoligrafosKiut.jpeg';
-import BoligrafoNorma from '../../assets/BoligrafoGelNegro.jpeg';
-import PlaneadorSem from '../../assets/PlaneadorSemanal.jpeg';
-import Cuaderno7M from '../../assets/Cuaderno7M.jpeg';
-import Block from '../../assets/Block.jpeg';
-import MarcadoBorr from '../../assets/MarcadoresBorrables.jpeg';
-import FolderArgoll from '../../assets/FolderArgollado.jpeg';
-import ColoresGig from '../../assets/ColoresJumbo.jpeg';
 import { useEffect, useState } from 'react';
 import { producto } from '../../types/productsProps';
-
-import Cookies from "js-cookie";
+import { Request } from "../../api/requests";
+import { useNavigate } from 'react-router-dom';
 import { useAppSelector } from '../../hooks/useAppDispatch';
-import { useNavigate } from "react-router-dom";
-
-const products = [
-  //Lista de productos que vamos a mostrar
-  { imgSrc: lonchera, name: 'Lonchera', price: '30.000' },
-  { imgSrc: cuaderno, name: 'Cuaderno cuadriculado', price: '20.000' },
-  { imgSrc: lienzo, name: 'Kit de pintura', price: '50.000' },
-  { imgSrc: cartuchera, name: 'Estuche colores', price: '25.000' },
-  {
-    imgSrc: BoligrafoKiut,
-    name: 'Boligrafos Kiut Morados X10 Und',
-    price: '17.000',
-  },
-  {
-    imgSrc: BoligrafoNorma,
-    name: 'Boligrafos Norma Negro X12',
-    price: '15.000',
-  },
-  {
-    imgSrc: PlaneadorSem,
-    name: 'Planeador Semanal Kiut 2025 ',
-    price: '20.000',
-  },
-  {
-    imgSrc: Cuaderno7M,
-    name: 'Cuaderno argollado tapa dura grande multimaterias 7M cuadriculado Jean Book tela real - Azul sky',
-    price: '63.000',
-  },
-  {
-    imgSrc: Block,
-    name: 'Block oficio línea corriente Jean Book - Denim pines cheer',
-    price: '6.732',
-  },
-  {
-    imgSrc: MarcadoBorr,
-    name: 'Marcadores Borrables Norma X10 und Negro',
-    price: '25.000',
-  },
-  {
-    imgSrc: FolderArgoll,
-    name: 'Folder argollado Pvc Academico Negro Ondas',
-    price: '18.000',
-  },
-  {
-    imgSrc: ColoresGig,
-    name: 'Caja de Colores Norma Gigantes Triangulares x 12 Und + Sacapunta',
-    price: '32.000',
-  },
-];
 
 export default function Dashboard() {
-  //const [product, setProductos] = useState<producto[]>([]);
+  //almacena los productos
+  const [producto, setProductos] = useState<producto[]>([]);
+  const [error, setError] = useState<string | null>(null);
+
   const auth = useAppSelector((state) => state.auth);
   const navigate = useNavigate();
 
@@ -79,25 +21,44 @@ export default function Dashboard() {
 
   const [filteredProductos, setFilteredProductos] = useState<producto[]>([]); //almacena los productos filtrados
   
-  // Agregar este useEffect
+  //realiza la solicitud al cargar la pagina
+  //useEffect para obtener los productos desde la API
   useEffect(() => {
-    setFilteredProductos(products); // Establecer los productos iniciales
-  }, []); // El array vacío significa que solo se ejecutará una vez al montar el componente
+    const fetchProductos = async () => {
+      const request = new Request("http://localhost:5000", {});
+      try {
+        const response = await request.get("producto/ConsultarTodos");
+        console.log('Datos del servidor:', response?.data);
+        if (response?.data) {
+          setProductos(response.data);
+          setFilteredProductos(response.data); // Inicialmente mostramos todos los productos
+        } else {
+          throw new Error("No se pudieron obtener los datos de los productos");
+        }
+      } catch (err: any) {
+        setError(err.message);
+      }
+    };
+
+    fetchProductos();
+  }, []);
+
   //Maneja la busqueda en tiempo real
   const handleSearch = (query: string) => {
     //el trim() elimina los espacios en blanco al principio y al final de la cadena
     if (query.trim() === '') {
       // Si la búsqueda está vacía, mostramos todos los productos
-      setFilteredProductos(products);
+      setFilteredProductos(producto);
     } else {
       // Filtramos los productos que coinciden con la búsqueda por nombre
-      const filtered = products.filter((productos) =>
-        productos.name.toLowerCase().includes(query.toLowerCase())
+      const filtered = producto.filter((products) =>
+        products.nombre.toLowerCase().includes(query.toLowerCase())
       );
       //se le asigna al filtro el filtro que acabamos de hacer por nombre
       setFilteredProductos(filtered);
     }
   };
+
   return (
     <div className="flex w-full h-screen">
       <Sidebar />
@@ -107,17 +68,26 @@ export default function Dashboard() {
         <h1 className="text-3xl font-semibold text-purple-400 text-center mt-23">
           Productos
         </h1>
+
+        {error && <p className="text-red-500 text-center mt-4">{error}</p>}
+
         {/*Contenedor de productos */}
         {/* Aquí vamos a colocar las tarjetas de productos */}
         <div className="mt-10 px-10">
           {/* Grid o cuadricula para organizar las tarjetas */}
           <div className="grid grid-cols-[repeat(auto-fit,minmax(18rem,1fr))] place-items-center gap-6 mt-8 ">
-            {/* Recorremos cada producto de la lista y mostramos una tarjeta */}
-            {filteredProductos.map((products, i) => (
-              // Creamos una tarjeta (ProductCard) para cada producto
-              // Usamos {...product} para pasar todos los datos como props
-              <ProductCard key={i} {...products} />
-            ))}
+            {filteredProductos.length > 0 ?(
+            filteredProductos.map((producto, i) => (
+              <ProductCard
+                key={i}
+                imagen={producto.imagen}
+                nombre={producto.nombre}
+                vlrUnitario={producto.vlrUnitario}
+              /> 
+            ))
+            ) : (
+              <p className="text-gray-500 text-center">No se encontraron productos.</p> 
+            )}
           </div>
         </div>
       </main>

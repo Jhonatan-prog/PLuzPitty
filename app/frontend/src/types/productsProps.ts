@@ -1,7 +1,7 @@
 type producto = {
-  imgSrc: string;
-  name: string;
-  price: string;
+  imagen: string;
+  nombre: string;
+  vlrUnitario: number;
 };
   
 export type { producto };

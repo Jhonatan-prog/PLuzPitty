@@ -1,24 +1,29 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
-const Alert: React.FC<{ mensaje: string; tipo: "exito" | "error" }> = ({ mensaje, tipo }) => {
+const Alert: React.FC<{ mensaje: string; tipo: "exito" | "error"; redirectTo?: string;}> = ({ mensaje, tipo, redirectTo }) => {
   const [progreso, setProgreso] = useState(0);
   const [visible, setVisible] = useState(true);
+  const navigate = useNavigate(); // Inicializa el hook para redirigir
 
   useEffect(() => {
     if (progreso < 100) {
       const timer = setTimeout(() => {
         setProgreso(progreso + 1);
-        
       }, 15); // Velocidad de avance de la barra (ajustable)
       return () => clearTimeout(timer);
+    } else {
+      // Cuando termine la carga, desaparecer
+      const timeout = setTimeout(() => {
+        setVisible(false);
+        // Solo navega si se proporcionó una ruta
+        if (redirectTo) {
+          navigate(redirectTo);
+        }
+      }, 500);
+      return () => clearTimeout(timeout);
     }
-
-    // Cuando termine la carga, desaparecer
-    const timeout = setTimeout(() => {
-      setVisible(false);
-    }, 500);
-    return () => clearTimeout(timeout);
-  }, [progreso]);
+  }, [progreso, navigate, redirectTo]);
 
   if (!visible) return null; // Si no está visible, no renderiza nada
 

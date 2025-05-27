@@ -24,8 +24,7 @@ namespace app.backend.Controllers
         }
 
         ////http://localhost:5000/api/producto/Insertar
-        [HttpPost]
-        [Route("Insertar")]
+        [HttpPost("Insertar")]
         public ActionResult Insertar([FromBody] Producto producto)
         {
             bool resultado = _servicio.Insertar(producto);
@@ -38,7 +37,7 @@ namespace app.backend.Controllers
 
         [HttpPut("{id}")]
         [Route("Actualizar")]
-        public IActionResult Actualizar(int id, [FromBody] Producto producto)
+        public IActionResult Actualizar(string id, [FromBody] Producto producto)
         {
             if (id != producto.CodigoProducto)
                 return BadRequest("ID en la ruta no coincide con el del producto");
@@ -51,7 +50,7 @@ namespace app.backend.Controllers
 
         [HttpDelete("{id}")]
         [Route("Eliminar")]
-        public IActionResult Eliminar(int id)
+        public IActionResult Eliminar(string id)
         {
             var resultado = _servicio.EliminarProducto(id);
             return resultado ? Ok("Producto eliminado") : NotFound("Producto no encontrado");

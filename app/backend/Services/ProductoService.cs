@@ -27,7 +27,7 @@ namespace app.backend.Services
             {
                 productos.Add(new Producto
                 {
-                    CodigoProducto = Convert.ToInt32(fila["CodigoProducto"]),
+                    CodigoProducto = fila["CodigoProducto"].ToString() ?? "",
                     Nombre = fila["Nombre"].ToString() ?? "",
                     Descripcion = fila["Descripcion"]?.ToString(),
                     VlrUnitario = Convert.ToDecimal(fila["VlrUnitario"]),
@@ -48,11 +48,12 @@ namespace app.backend.Services
             _conexion.AbrirBd();
 
             string sql = @"INSERT INTO Producto 
-                (Nombre, Descripcion, VlrUnitario, VlrSinIva, VlrCompra, Stock, FechaIngreso, imagen)
-                VALUES (@Nombre, @Descripcion, @VlrUnitario, @VlrSinIva, @VlrCompra, @Stock, @FechaIngreso, @imagen)";
+                (CodigoProducto, Nombre, Descripcion, VlrUnitario, VlrSinIva, VlrCompra, Stock, FechaIngreso, imagen)
+                VALUES (@CodigoProducto, @Nombre, @Descripcion, @VlrUnitario, @VlrSinIva, @VlrCompra, @Stock, @FechaIngreso, @imagen)";
 
             var parametros = new[]
             {
+                _conexion.CreateParameter("@CodigoProducto", p.CodigoProducto),
                 _conexion.CreateParameter("@Nombre", p.Nombre),
                 _conexion.CreateParameter("@Descripcion", p.Descripcion),
                 _conexion.CreateParameter("@VlrUnitario", p.VlrUnitario),
@@ -101,7 +102,23 @@ namespace app.backend.Services
                 return filas > 0;
         }
 
-        public bool EliminarProducto(int id)
+        public string ObtenerNombreImagen(string id)
+        {
+            string sql = "SELECT imagen FROM Producto WHERE CodigoProducto = @id";
+            var parametros = new[] { _conexion.CreateParameter("@id", id) };
+             _conexion.AbrirBd();
+            var tabla = _conexion.EjecutarConsultaSql(sql, parametros);
+            _conexion.CerrarBd();
+
+            if (tabla.Rows.Count > 0)
+            {
+                return tabla.Rows[0]["imagen"]?.ToString();
+            }
+            return null!;
+        }
+
+
+        public bool EliminarProducto(string id)
         {
             string sql = "DELETE FROM Producto WHERE CodigoProducto = @id";
 

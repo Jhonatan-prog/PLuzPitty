@@ -1,12 +1,12 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Request } from "../../api/requests";
 import { ProveedorFormValues } from "../../types/FormProveedorProps";
 import { RTimeValidation } from "../../utils/validation/inputs";
 import Alert from "../Alertas/Alert";
-
+import axios from "axios";
 
 const AgregarProveedor: React.FC = () => {
-  
   //valores iniciales que tendra el proveedor
   const valorInicial: ProveedorFormValues = {
     Nit: "",
@@ -25,30 +25,44 @@ const AgregarProveedor: React.FC = () => {
   const [errores, setErrores] = useState<{ [key: string]: string }>({});
   const validator = new RTimeValidation();
   const [alerta, setAlerta] = useState<{ mensaje: string; tipo: "exito" | "error" } | null>(null);
-
+  const navigate = useNavigate();
 
   const limpiarFormulario = () => {
     setFormData(valorInicial);
     setVistaPrevia(null);
     setErrores({});
+    navigate("/Proveedor"); // Redirige a la página de proveedores después de limpiar el formulario
   };
 
   //Revisamos cada vez que se cambie algo en los campos del formulario
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, files } = e.target;
 
     //guardamos la imagen y se muestra la vista previa
     if (type === "file" && files) {
       const file = files[0];
-      setFormData((prev) => ({ ...prev, imagen: file.name }));// Guardamos el nombre del archivo
       setVistaPrevia(URL.createObjectURL(file));
       setErrores((prev) => ({ ...prev, imagen: "" }));
-      return;
+
+      const nombreImagen = await subirImagen(file); // Esperamos a que se suba la imagen al backend y guardamos el nombre de la imagen que devuelve
+
+      if (nombreImagen) {//si se subio correctamente la imagen
+        // Actualizamos el estado del formulario con el nombre de la imagen
+        setFormData((prev) => ({ ...prev, imagen: nombreImagen }));
+      } else {
+        // actualizamos el estado de errores para mostrar un mensaje en el campo 'imagen'
+        setErrores((prev) => ({ ...prev, imagen: "Error al subir la imagen" }));
+      }
+
+  return;
     }
 
     if (name === "Nombre" && !validator.soloLetras(value)) return;
     if (name === "NombreContacto" && !validator.soloLetras(value)) return; 
-    if (name === "Telefono" && !validator.soloNumeros(value)) return; 
+    if (name === "Telefono"){
+      if(!validator.soloNumeros(value)) return;
+      if(value.length > 10) return; // Limita el número de caracteres a 10
+    } 
 
     //Cuando tenemos el mensaje de campo requerido, y empezamos a copiar en dicho campo, se quita el mensaje de error
     if (errores[name]) {
@@ -63,8 +77,8 @@ const AgregarProveedor: React.FC = () => {
   };
 
   const enviarProveedor = async (formData: ProveedorFormValues) => {
-    const request = new Request("http://localhost:5000", formData);
 
+    const request = new Request("http://localhost:5000", formData);
     try {
 
       const response = await request.post("Proveedor/Insertar");
@@ -85,7 +99,6 @@ const AgregarProveedor: React.FC = () => {
     e.preventDefault();//ayuda a que no se recargue la pag
 
     const nuevosErrores = validator.validarCamposProveedor(formData);
-
     if (Object.keys(nuevosErrores).length > 0) {
       setErrores(nuevosErrores); // Muestra los errores si los hay
       return;
@@ -93,15 +106,31 @@ const AgregarProveedor: React.FC = () => {
       try {
         await enviarProveedor(formData); // Llama a la función para enviar los datos
         setAlerta({ mensaje: "¡Proveedor agregado correctamente!", tipo: "exito" });// Muestra la alerta de éxito
-        limpiarFormulario(); 
+         
        } catch (error) {
         setAlerta({ mensaje: "¡El proveedor NO se pudo agregar!", tipo: "error" });
       }
   };
 
+  // Función asincrónica que recibe un archivo de tipo File y retorna una promesa(Algo que se va a completar en el futuro (éxito o error)) con un string (nombre de la imagen) o null si hay error
+  const subirImagen = async (file: File): Promise<string | null> => {//promesa no devuelve el resultado inmediatamente, si no que estara pendiente hasta que se cumpla, se usa cuando se trabaja con codigo asincrono
+    const formData = new FormData();// Se crea un nuevo objeto FormData para enviar el archivo como parte del cuerpo de una solicitud HTTP
+    formData.append("archivo", file);// Se agrega el archivo al FormData con la clave "archivo", que debe coincidir con lo que espera el backend
+    try {
+      const response = await axios.post("http://localhost:5000/api/Upload/subir/proveedor", formData, {//formData Cuerpo de la solicitud, con el archivo adjunto
+      headers: { "Content-Type": "multipart/form-data" }, // Se especifica el tipo de contenido para que el backend procese correctamente el archivo
+    });
+
+      return response.data; // Si la solicitud es exitosa, se retorna el nombre del archivo que responde el backend
+    } catch (error) {
+      console.error("Error al subir la imagen:", error);
+      return null;
+    }
+  };
+
   return (
     <> 
-    {alerta && <Alert mensaje={alerta.mensaje} tipo={alerta.tipo} />}
+    {alerta && <Alert mensaje={alerta.mensaje} tipo={alerta.tipo} redirectTo="/Proveedor"/>}
 
     <div className="min-h-screen flex items-center justify-center bg-white p-25">
       <div className="bg-white p-8 rounded-xl shadow-xl w-full max-w-4xl border border-gray-200 ">
@@ -114,7 +143,7 @@ const AgregarProveedor: React.FC = () => {
           <div className="flex flex-col items-center border border-purple-400 bg-gray-100 rounded-lg p-4 h-48 justify-center">
             <label htmlFor="imagen" className="cursor-pointer text-gray-500 text-sm text-center">
               {vistaPrevia ? (
-                <img src={vistaPrevia} alt="Vista previa" className="h-full object-contain" />
+                <img src={vistaPrevia} alt="Vista previa" className="h-full max-h-45 object-contain" />
               ) : (
                 "Haz clic para subir imagen"
               )}
@@ -131,23 +160,16 @@ const AgregarProveedor: React.FC = () => {
           </div>
 
           <Campo label="Nombre Contacto" name="NombreContacto" value={formData.NombreContacto} onChange={handleChange} error={errores.NombreContacto} />
-          <Campo label="Telefono" name="Telefono" value={formData.Telefono} onChange={handleChange} error={errores.Telefono} />
+          <Campo label="Telefono" name="Telefono" value={formData.Telefono} onChange={handleChange} error={errores.Telefono}/>
           <Campo label="Direccion" name="Direccion" value={formData.Direccion} onChange={handleChange} error={errores.Direccion} />
           <Campo label="Redes" name="Redes" value={formData.Redes} onChange={handleChange} error={errores.Redes} />
 
           <div className="md:col-span-2 flex justify-end gap-4">
-            <button
-              type="button"
-              onClick={limpiarFormulario}
-              className="bg-cyan-200 hover:bg-cyan-300 px-4 py-2 rounded-md"
-            >
+            <button type="button" onClick={limpiarFormulario} className="bg-cyan-200 hover:bg-cyan-300 px-4 py-2 rounded-md">
               Cancelar
             </button>
             
-            <button
-              type="submit"
-              className="bg-cyan-200 hover:bg-cyan-300 px-4 py-2 rounded-md"
-            >
+            <button type="submit" className="bg-cyan-200 hover:bg-cyan-300 px-4 py-2 rounded-md">
               Agregar
             </button>
           </div>
