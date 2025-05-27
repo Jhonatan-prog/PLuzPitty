@@ -12,7 +12,7 @@ import { IT } from '../../types/validation/inputs';
 import { useNavigate } from "react-router-dom";
 
 const styles = TSCSS.auth;
-const invalidInput = "border-solid border-3 border-red-300 focus:border-red-300";
+const invalidInput = "ring-[3px] ring-red-300 focus:ring-red-300";
 const invalidField = "opacity-100 text-red-300 bottom-[-10px] left-3";
 
 const Label = ({ reference, message, isValid, userInput }: LabelProps) => {
@@ -85,16 +85,16 @@ const RegisterFormComponent = () => {
 
     const response = await request.post('Usuario');
 
-    setAlerta(null);
+    if (!response || response.status >= 400) {
 
-    if (response && response.status >= 400) {
+      setAlerta(null);
 
       setTimeout(() => {
         setAlerta({ 
-          mensaje: "¡No pudimos registrarte, intenta de nuevo!", 
+          mensaje: response.status === 409 ? "¡El correo ya está en uso!" : "¡No pudimos registrarte, intenta de nuevo!", 
           tipo: "error" 
         });
-      }, 0)
+      }, 100)
 
       setPassword("");
       setPasswordConfirmation("");

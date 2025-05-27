@@ -26,8 +26,16 @@ class Request {
                 data: axResponse.data,
                 status: axResponse.status
             }
-        } catch (error) {
+        } catch (error: any) {
             console.error(fp.error.message);
+
+            // Si es un error de Axios, intenta obtener el status real
+            const status = error?.response?.status ?? 500;
+
+            return {
+                data: null,
+                status: status
+            };
         }
     }
 

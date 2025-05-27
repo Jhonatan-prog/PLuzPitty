@@ -10,7 +10,7 @@ import Alert from "../Alertas/Alert";
 import { tailwindStyles as TSCSS} from "../../styles/styles.tailwind";
 
 const styles = TSCSS.auth;
-const invalidInput = "border-solid border-3 border-red-300 focus:border-red-300";
+const invalidInput = "ring-[3px] ring-red-300 focus:ring-red-300";
 
 const Checkbox = ({ 
     label, useSt, onChange 
