@@ -84,10 +84,10 @@ const RegisterFormComponent = () => {
     };
 
     const response = await request.post('Usuario');
+    
+    setAlerta(null);
 
     if (!response || response.status >= 400) {
-
-      setAlerta(null);
 
       setTimeout(() => {
         setAlerta({ 
@@ -116,10 +116,12 @@ const RegisterFormComponent = () => {
       return;
     }
     
-    setAlerta({ 
-      mensaje: "¡Usuario registrado!", 
-      tipo: "exito" 
-    });
+    setTimeout(() => {
+      setAlerta({ 
+        mensaje: "¡Usuario registrado!", 
+        tipo: "exito" 
+      });
+    }, 100)
 
     setTimeout(() => {
       navigate("/login")
