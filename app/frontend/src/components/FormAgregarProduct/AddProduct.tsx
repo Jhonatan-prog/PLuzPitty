@@ -90,11 +90,19 @@ const AgregarProducto: React.FC = () => {
       return;
     }
     try {
+        setAlerta(null);
         await enviarProducto(formData); // Llama a la función para enviar los datos
         setAlerta({ mensaje: "¡Producto agregado correctamente!", tipo: "exito" });// Muestra la alerta de éxito 
-      } catch (error) {
-        setAlerta({ mensaje: "¡El producto NO se pudo agregar!", tipo: "error" });
+    } catch (error:any) {
+        if (error.message.includes("código")) {// El nombre "código" sale de la linea 119, ya que lanza el error con código
+          setErrores(prev => ({
+          ...prev,
+          CodigoProducto: error.message // Esto muestra el mensaje debajo del input
+        }));
       }
+      setAlerta({ mensaje: error.message, tipo: "error" });
+    }
+      
   };
 
   const enviarProducto = async (formData: ProductoFormValues) => {
@@ -106,12 +114,14 @@ const AgregarProducto: React.FC = () => {
       console.log("Respuesta del servidor:", formData);
       if (response?.status === 200) {
         console.log("Alerta de éxito:", alerta);
+        return true;
+      } else if (response?.status >= 400) {
+        throw new Error("Ya existe un producto con ese código.");
       } else {
-        console.error("Error al agregar el producto:", alerta);      
+        throw new Error("Error al agregar el producto.");
       }
-    } catch (error) {
-      console.error("Error al agregar el producto:", error);
-      
+    } catch (error: any) {
+      throw new Error(error?.message || "Error al agregar el producto.");
     }
   };   
 
@@ -133,7 +143,7 @@ const AgregarProducto: React.FC = () => {
 
   return (
     <> 
-    {alerta && <Alert mensaje={alerta.mensaje} tipo={alerta.tipo} redirectTo="/inventario"/>}
+    {alerta && <Alert mensaje={alerta.mensaje} tipo={alerta.tipo} redirectTo={alerta.tipo === "exito" ? "/inventario" : undefined}/>}
 
     <div className="min-h-screen flex items-center justify-center bg-white p-25">
       <div className="bg-white p-8 rounded-xl shadow-xl w-full max-w-4xl border border-gray-200 ">
@@ -148,7 +158,7 @@ const AgregarProducto: React.FC = () => {
               {vistaPrevia ? (
                 <img src={vistaPrevia} alt="Vista previa" className="h-full object-contain max-h-45" />
               ) : (
-                "Haz clic para subir imagen"
+                "Haz click para subir imagen"
               )}
               <input type="file" id="imagen" name="imagen" className="hidden" onChange={handleChange} />
             </label>
