@@ -85,12 +85,14 @@ const AgregarProveedor: React.FC = () => {
       console.log("Respuesta del servidor:", formData);
       if (response?.status === 200) {
         console.log("Alerta de éxito:", alerta);
+        return true;
+      } else if (response?.status >= 400) {
+        throw new Error("Ya existe un provedor con ese Nit.");
       } else {
-        console.error("Error al agregar el proveedor:", alerta);      
+        throw new Error("Error al agregar el proveedor.");
       }
-    } catch (error) {
-      console.error("Error al agregar el proveedor:", error);
-      
+    } catch (error: any) {
+      throw new Error(error?.message || "Error al agregar el proveedor.");
     }
   };    
 
@@ -104,12 +106,19 @@ const AgregarProveedor: React.FC = () => {
       return;
     }
       try {
+        setAlerta(null);
         await enviarProveedor(formData); // Llama a la función para enviar los datos
         setAlerta({ mensaje: "¡Proveedor agregado correctamente!", tipo: "exito" });// Muestra la alerta de éxito
          
-       } catch (error) {
-        setAlerta({ mensaje: "¡El proveedor NO se pudo agregar!", tipo: "error" });
+       } catch (error:any) {
+        if (error.message.includes("Nit")) {// El nombre "Nit" sale de la linea 90, ya que lanza el error con Nit
+          setErrores(prev => ({
+          ...prev,
+          Nit: error.message // Esto muestra el mensaje debajo del input
+        }));
       }
+      setAlerta({ mensaje: error.message, tipo: "error" });
+    }
   };
 
   // Función asincrónica que recibe un archivo de tipo File y retorna una promesa(Algo que se va a completar en el futuro (éxito o error)) con un string (nombre de la imagen) o null si hay error
@@ -130,7 +139,7 @@ const AgregarProveedor: React.FC = () => {
 
   return (
     <> 
-    {alerta && <Alert mensaje={alerta.mensaje} tipo={alerta.tipo} redirectTo="/Proveedor"/>}
+    {alerta && <Alert mensaje={alerta.mensaje} tipo={alerta.tipo} redirectTo={alerta.tipo === "exito" ? "/Proveedor" : undefined}/>}
 
     <div className="min-h-screen flex items-center justify-center bg-white p-25">
       <div className="bg-white p-8 rounded-xl shadow-xl w-full max-w-4xl border border-gray-200 ">
@@ -145,7 +154,7 @@ const AgregarProveedor: React.FC = () => {
               {vistaPrevia ? (
                 <img src={vistaPrevia} alt="Vista previa" className="h-full max-h-45 object-contain" />
               ) : (
-                "Haz clic para subir imagen"
+                "Haz click para subir imagen"
               )}
               <input type="file" id="imagen" name="imagen" className="hidden" onChange={handleChange} />
             </label>
@@ -160,8 +169,8 @@ const AgregarProveedor: React.FC = () => {
           </div>
 
           <Campo label="Nombre Contacto" name="NombreContacto" value={formData.NombreContacto} onChange={handleChange} error={errores.NombreContacto} />
-          <Campo label="Telefono" name="Telefono" value={formData.Telefono} onChange={handleChange} error={errores.Telefono}/>
-          <Campo label="Direccion" name="Direccion" value={formData.Direccion} onChange={handleChange} error={errores.Direccion} />
+          <Campo label="Teléfono" name="Telefono" value={formData.Telefono} onChange={handleChange} error={errores.Telefono}/>
+          <Campo label="Dirección" name="Direccion" value={formData.Direccion} onChange={handleChange} error={errores.Direccion} />
           <Campo label="Redes" name="Redes" value={formData.Redes} onChange={handleChange} error={errores.Redes} />
 
           <div className="md:col-span-2 flex justify-end gap-4">
