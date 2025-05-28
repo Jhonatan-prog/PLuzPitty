@@ -174,9 +174,9 @@ const AgregarProducto: React.FC = () => {
 
           <Campo label="Cantidad en stock" name="Stock" type="number" value={formData.Stock.toString()} onChange={handleChange} error={errores.Stock} />
           <Campo label="Fecha ingreso dd/mm/aaaa" name="FechaIngreso" type="date" value={formData.FechaIngreso} onChange={handleChange} error={errores.FechaIngreso} />
-          <CampoMoneda label="Valor unitario COP" name="VlrUnitario" value={formData.VlrUnitario} onChange={handleChange} error={errores.VlrUnitario} formatter={formatter} />
-          <CampoMoneda label="Valor sin IVA COP" name="VlrSinIva" value={formData.VlrSinIva} onChange={handleChange} error={errores.VlrSinIva} formatter={formatter} />
-          <CampoMoneda label="Valor de compra COP" name="VlrCompra" value={formData.VlrCompra} onChange={handleChange} error={errores.VlrCompra} formatter={formatter} />
+          <CampoMoneda label="Valor unitario COP" name="VlrUnitario" value={formData.VlrUnitario.toString()} onChange={handleChange} error={errores.VlrUnitario} formatter={formatter} />
+          <CampoMoneda label="Valor sin IVA COP" name="VlrSinIva" value={formData.VlrSinIva.toString()} onChange={handleChange} error={errores.VlrSinIva} formatter={formatter} />
+          <CampoMoneda label="Valor de compra COP" name="VlrCompra" value={formData.VlrCompra.toString()} onChange={handleChange} error={errores.VlrCompra} formatter={formatter} />
           <Campo label="Descripción" name="Descripcion" value={formData.Descripcion} onChange={handleChange} />
 
           <div className="md:col-span-2 flex justify-end gap-4">
@@ -243,7 +243,7 @@ const CampoMoneda = ({
 }: {
   label: string;
   name: string;
-  value: number;
+  value: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   error?: string;
   formatter: Intl.NumberFormat;
@@ -259,7 +259,7 @@ const CampoMoneda = ({
         className="mt-1 block w-full rounded-md bg-gray-100 p-2 pr-16 focus:outline-none"
       />
       <span className="absolute right-3 top-2 text-gray-400 text-sm">
-        {formatter.format(value)}
+        {formatter.format(Number(value))}
       </span>
     </div>
     {error && <p className="text-red-500 text-sm">{error}</p>}
