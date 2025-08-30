@@ -42,7 +42,6 @@ class RTimeValidation implements IRTimeValidation {
 
     public validationComplete(validData: any) {
         const validForm = Object.values(validData).every((value) => value === true);
-        console.log(validForm)
         return validForm
     }
 
@@ -73,6 +72,25 @@ class RTimeValidation implements IRTimeValidation {
         return imagen !== null; // Retorna true si la imagen no es null
     }
 
+    public sinespeciales(sinEspeciales: string) {
+        this.regex = /^[a-zA-Z0-9\s\-\/.]*$/; // Permite letras, números, espacios, guiones y algunos caracteres especiales
+        return this.regex.test(sinEspeciales);
+    }
+    
+    public validarCamposProducto(formData: any) {
+        const errores: { [key: string]: string } = {};
+
+        if ((!formData.CodigoProducto)) errores.CodigoProducto = "Este campo es obligatorio";
+        if ((!formData.Nombre)) errores.Nombre = "Este campo es obligatorio";
+        if ((!formData.FechaIngreso)) errores.FechaIngreso = "Este campo es obligatorio";
+        if ((!formData.Stock)) errores.Stock = "Este campo es obligatorio";
+        if ((!formData.VlrUnitario)) errores.VlrUnitario = "Este campo es obligatorio";
+        if ((!formData.VlrSinIva)) errores.VlrSinIva = "Este campo es obligatorio";
+        if ((!formData.VlrCompra)) errores.VlrCompra = "Este campo es obligatorio";
+        if (!this.imagen(formData.imagen)) errores.imagen = "La imagen es obligatoria";
+
+        return errores;
+    }
     public validarCamposProveedor(formData: any) {
         const errores: { [key: string]: string } = {};
 

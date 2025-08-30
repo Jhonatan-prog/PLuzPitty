@@ -1,16 +1,22 @@
 import React, { useState } from "react";
 import { ProductoFormValues } from "../../types/FormProductsProps";
+import { RTimeValidation } from "../../utils/validation/inputs";
+import Alert from "../Alertas/Alert";
+import { useNavigate } from "react-router-dom";
+import { Request } from "../../api/requests";
+import axios from "axios";
 
 const AgregarProducto: React.FC = () => {
   //valores iniciales que tendra el producto
   const valorInicial: ProductoFormValues = {
-    codigo: "",
-    nombre: "",
-    cantidad: 0,
-    fechaIngreso: "",
-    valorUnitario: 0,
-    valorSinIVA: 0,
-    valorCompra: 0,
+    CodigoProducto: "",
+    Nombre: "",
+    Descripcion: "",
+    VlrUnitario: 0,
+    VlrSinIva: 0,
+    VlrCompra: 0,
+    Stock: 0,
+    FechaIngreso: "",
     imagen: null,
   };
   //guardamos la informacion que vamos escribiendo
@@ -19,6 +25,9 @@ const AgregarProducto: React.FC = () => {
   const [vistaPrevia, setVistaPrevia] = useState<string | null>(null);
   //Guardamos los errores
   const [errores, setErrores] = useState<{ [key: string]: string }>({});
+  const validator = new RTimeValidation();
+  const [alerta, setAlerta] = useState<{ mensaje: string; tipo: "exito" | "error" } | null>(null);
+  const navigate = useNavigate();
 
   //formateara los precios a pesos colombianos COP
   const formatter = new Intl.NumberFormat("es-CO", {
@@ -31,27 +40,33 @@ const AgregarProducto: React.FC = () => {
     setFormData(valorInicial);
     setVistaPrevia(null);
     setErrores({});
+    navigate("/inventario"); // Redirige a la página de inventario después de limpiar el formulario
   };
 
   //Revisamos cada vez que se cambie algo en los campos del formulario
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, files } = e.target;
-
-    const sinEspeciales = /^[a-zA-Z0-9\s\-\/.]*$/;
-    const soloLetras = /^[a-zA-Z\s\-]*$/;
 
     //guardamos la imagen y se muestra la vista previa
     if (type === "file" && files) {
       const file = files[0];
-      setFormData((prev) => ({ ...prev, imagen: file }));
       setVistaPrevia(URL.createObjectURL(file));
       setErrores((prev) => ({ ...prev, imagen: "" }));
+      const nombreImagen = await subirImagen(file); // Esperamos a que se suba la imagen al backend y guardamos el nombre de la imagen que devuelve
+
+      if (nombreImagen) {//si se subio correctamente la imagen
+        // Actualizamos el estado del formulario con el nombre de la imagen
+        setFormData((prev) => ({ ...prev, imagen: nombreImagen }));
+      } else {
+        // actualizamos el estado de errores para mostrar un mensaje en el campo 'imagen'
+        setErrores((prev) => ({ ...prev, imagen: "Error al subir la imagen" }));
+      }
       return;
     }
 
     //evita numeros y caracteres especiales
-    if (!sinEspeciales.test(value)) return;
-    if (name === "nombre" && !soloLetras.test(value)) return;
+    if (!validator.sinespeciales(value)) return;
+    if (name === "nombre" && !validator.soloLetras(value)) return;
     if (name === "cantidad" && value.includes(".")) return; // evita decimales
 
     //Cuando tenemos el mensaje de campo requerido, y empezamos a copiar en dicho campo, se quita el mensaje de error
@@ -66,31 +81,70 @@ const AgregarProducto: React.FC = () => {
     }));
   };
 
-  const validarCampos = (): boolean => {
-    const nuevosErrores: { [key: string]: string } = {};
-    if (!formData.codigo) nuevosErrores.codigo = "Este campo es obligatorio";
-    if (!formData.nombre) nuevosErrores.nombre = "Este campo es obligatorio";
-    if (!formData.fechaIngreso) nuevosErrores.fechaIngreso = "Este campo es obligatorio";
-    if (formData.cantidad <= 0) nuevosErrores.cantidad = "Debe ser mayor a 0";
-    if (formData.valorUnitario <= 0) nuevosErrores.valorUnitario = "Debe ser mayor a 0";
-    if (formData.valorSinIVA <= 0) nuevosErrores.valorSinIVA = "Debe ser mayor a 0";
-    if (formData.valorCompra <= 0) nuevosErrores.valorCompra = "Debe ser mayor a 0";
-    if (!formData.imagen) nuevosErrores.imagen = "La imagen es obligatoria";
-
-    setErrores(nuevosErrores);
-    return Object.keys(nuevosErrores).length === 0;
+  //Cuando le damos al boton agregar
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();//ayuda a que no se recargue la pag
+    const nuevosErrores = validator.validarCamposProducto(formData);
+    if (Object.keys(nuevosErrores).length > 0) {
+      setErrores(nuevosErrores);
+      return;
+    }
+    try {
+        setAlerta(null);
+        await enviarProducto(formData); // Llama a la función para enviar los datos
+        setAlerta({ mensaje: "¡Producto agregado correctamente!", tipo: "exito" });// Muestra la alerta de éxito 
+    } catch (error:any) {
+        if (error.message.includes("código")) {// El nombre "código" sale de la linea 119, ya que lanza el error con código
+          setErrores(prev => ({
+          ...prev,
+          CodigoProducto: error.message // Esto muestra el mensaje debajo del input
+        }));
+      }
+      setAlerta({ mensaje: error.message, tipo: "error" });
+    }
+      
   };
 
-  //Cuando le damos al boton agregar
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();//ayuda a que no se recargue la pag
-    if (validarCampos()) {
-      console.log("Formulario válido:", formData);
-      limpiarFormulario();
+  const enviarProducto = async (formData: ProductoFormValues) => {
+
+    const request = new Request("http://localhost:5000", formData);
+    try {
+
+      const response = await request.post("producto/Insertar");
+      console.log("Respuesta del servidor:", formData);
+      if (response?.status === 200) {
+        console.log("Alerta de éxito:", alerta);
+        return true;
+      } else if (response?.status >= 400) {
+        throw new Error("Ya existe un producto con ese código.");
+      } else {
+        throw new Error("Error al agregar el producto.");
+      }
+    } catch (error: any) {
+      throw new Error(error?.message || "Error al agregar el producto.");
+    }
+  };   
+
+  // Función asincrónica que recibe un archivo de tipo File y retorna una promesa(Algo que se va a completar en el futuro (éxito o error)) con un string (nombre de la imagen) o null si hay error
+  const subirImagen = async (file: File): Promise<string | null> => {//promesa no devuelve el resultado inmediatamente, si no que estara pendiente hasta que se cumpla, se usa cuando se trabaja con codigo asincrono
+    const formData = new FormData();// Se crea un nuevo objeto FormData para enviar el archivo como parte del cuerpo de una solicitud HTTP
+    formData.append("archivo", file);// Se agrega el archivo al FormData con la clave "archivo", que debe coincidir con lo que espera el backend
+    try {
+      const response = await axios.post("http://localhost:5000/api/Upload/subir/producto", formData, {//formData Cuerpo de la solicitud, con el archivo adjunto
+      headers: { "Content-Type": "multipart/form-data" }, // Se especifica el tipo de contenido para que el backend procese correctamente el archivo
+    });
+
+      return response.data; // Si la solicitud es exitosa, se retorna el nombre del archivo que responde el backend
+    } catch (error) {
+      console.error("Error al subir la imagen:", error);
+      return null;
     }
   };
 
   return (
+    <> 
+    {alerta && <Alert mensaje={alerta.mensaje} tipo={alerta.tipo} redirectTo={alerta.tipo === "exito" ? "/inventario" : undefined}/>}
+
     <div className="min-h-screen flex items-center justify-center bg-white p-25">
       <div className="bg-white p-8 rounded-xl shadow-xl w-full max-w-4xl border border-gray-200 ">
         <h1 className="text-center text-4xl font-bold text-purple-400 mb-8">Agregar producto</h1>
@@ -102,9 +156,9 @@ const AgregarProducto: React.FC = () => {
           <div className="flex flex-col items-center border border-purple-400 bg-gray-100 rounded-lg p-4 h-48 justify-center">
             <label htmlFor="imagen" className="cursor-pointer text-gray-500 text-sm text-center">
               {vistaPrevia ? (
-                <img src={vistaPrevia} alt="Vista previa" className="h-full object-contain" />
+                <img src={vistaPrevia} alt="Vista previa" className="h-full object-contain max-h-45" />
               ) : (
-                "Haz clic para subir imagen"
+                "Haz click para subir imagen"
               )}
               <input type="file" id="imagen" name="imagen" className="hidden" onChange={handleChange} />
             </label>
@@ -114,15 +168,16 @@ const AgregarProducto: React.FC = () => {
           </div>
 
           <div className="space-y-4">
-            <Campo label="Código del producto" name="codigo" value={formData.codigo} onChange={handleChange} error={errores.codigo} />
-            <Campo label="Nombre" name="nombre" value={formData.nombre} onChange={handleChange} error={errores.nombre} />
+            <Campo label="Código del producto" name="CodigoProducto" value={formData.CodigoProducto} onChange={handleChange} error={errores.CodigoProducto} />
+            <Campo label="Nombre" name="Nombre" value={formData.Nombre} onChange={handleChange} error={errores.Nombre} />
           </div>
 
-          <Campo label="Cantidad en stock" name="cantidad" type="number" value={formData.cantidad.toString()} onChange={handleChange} error={errores.cantidad} />
-          <Campo label="Fecha ingreso dd/mm/aaaa" name="fechaIngreso" type="date" value={formData.fechaIngreso} onChange={handleChange} error={errores.fechaIngreso} />
-          <CampoMoneda label="Valor unitario COP" name="valorUnitario" value={formData.valorUnitario} onChange={handleChange} error={errores.valorUnitario} formatter={formatter} />
-          <CampoMoneda label="Valor sin IVA COP" name="valorSinIVA" value={formData.valorSinIVA} onChange={handleChange} error={errores.valorSinIVA} formatter={formatter} />
-          <CampoMoneda label="Valor de compra COP" name="valorCompra" value={formData.valorCompra} onChange={handleChange} error={errores.valorCompra} formatter={formatter} />
+          <Campo label="Cantidad en stock" name="Stock" type="number" value={formData.Stock.toString()} onChange={handleChange} error={errores.Stock} />
+          <Campo label="Fecha ingreso dd/mm/aaaa" name="FechaIngreso" type="date" value={formData.FechaIngreso} onChange={handleChange} error={errores.FechaIngreso} />
+          <CampoMoneda label="Valor unitario COP" name="VlrUnitario" value={formData.VlrUnitario.toString()} onChange={handleChange} error={errores.VlrUnitario} formatter={formatter} />
+          <CampoMoneda label="Valor sin IVA COP" name="VlrSinIva" value={formData.VlrSinIva.toString()} onChange={handleChange} error={errores.VlrSinIva} formatter={formatter} />
+          <CampoMoneda label="Valor de compra COP" name="VlrCompra" value={formData.VlrCompra.toString()} onChange={handleChange} error={errores.VlrCompra} formatter={formatter} />
+          <Campo label="Descripción" name="Descripcion" value={formData.Descripcion} onChange={handleChange} />
 
           <div className="md:col-span-2 flex justify-end gap-4">
             <button
@@ -142,6 +197,7 @@ const AgregarProducto: React.FC = () => {
         </form>
       </div>
     </div>
+    </>
   );
 };
 
@@ -187,7 +243,7 @@ const CampoMoneda = ({
 }: {
   label: string;
   name: string;
-  value: number;
+  value: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   error?: string;
   formatter: Intl.NumberFormat;
@@ -203,7 +259,7 @@ const CampoMoneda = ({
         className="mt-1 block w-full rounded-md bg-gray-100 p-2 pr-16 focus:outline-none"
       />
       <span className="absolute right-3 top-2 text-gray-400 text-sm">
-        {formatter.format(value)}
+        {formatter.format(Number(value))}
       </span>
     </div>
     {error && <p className="text-red-500 text-sm">{error}</p>}

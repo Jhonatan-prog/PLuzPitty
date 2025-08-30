@@ -21,7 +21,7 @@ class Auth {
         this.dispatch = useAppDispatch();
     }
 
-    async login() {
+    async login(persistent: boolean) {
         if (!this.cred) {
             this.cred = {
                 Correo: (this.request.data as User).Correo,
@@ -34,7 +34,11 @@ class Auth {
         const response = await this.request.post('auth/login', this.cred);
         if (response && response.data) {
             const { token } = response.data;
+
+            if (!persistent) return Cookies.set("token", token)
+
             Cookies.set("token", token, { expires: 7 });
+
             return response.data;
         }
 

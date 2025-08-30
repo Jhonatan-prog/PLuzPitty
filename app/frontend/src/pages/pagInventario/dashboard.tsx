@@ -1,62 +1,91 @@
 import Sidebar from "../../components/pagInicio/sidebar"; 
 import Header from "../../components/pagInicio/header";
-import InventarioCard from "../../components/pagInventario/InventarioCard";
-import lonchera from "../../assets/lonchera.png";
-import cuaderno from "../../assets/cuaderno.png";
-import lienzo from "../../assets/lienzo.png";
-import cartuchera from "../../assets/cartuchera.png";
-import BoligrafoKiut from "../../assets/BoligrafosKiut.jpeg";
-import BoligrafoNorma from "../../assets/BoligrafoGelNegro.jpeg";
-import PlaneadorSem from "../../assets/PlaneadorSemanal.jpeg";
-import Cuaderno7M from "../../assets/Cuaderno7M.jpeg";
-import Block from "../../assets/Block.jpeg";
-import MarcadoBorr from "../../assets/MarcadoresBorrables.jpeg";
-import FolderArgoll from "../../assets/FolderArgollado.jpeg";
-import ColoresGig from "../../assets/ColoresJumbo.jpeg";
+import InventoryCard from "../../components/pagInventario/InventarioCard";
 import { FaPlus } from "react-icons/fa";
-
-// Lista de productos que vamos a mostrar
-const products: InventoryCardProps[] = [
-  { imgSrc: lonchera, name: "Lonchera", description: "Lonchera térmica infantil con 3 compartimentos", stock: 15 },
-  { imgSrc: cuaderno, name: "Cuaderno cuadriculado", description: "Cuaderno cosido de 100 hojas cuadriculado", stock: 25 },
-  { imgSrc: lienzo, name: "Kit de pintura", description: "Kit completo de pintura para principiantes", stock: 12 },
-  { imgSrc: cartuchera, name: "Estuche colores", description: "Estuche de colores surtidos para dibujar", stock: 20 },
-  { imgSrc: BoligrafoKiut, name: "Bolígrafos Kiut Morados", description: "Bolígrafos Kiut Morados X10 unidades", stock: 30 },
-  { imgSrc: BoligrafoNorma, name: "Bolígrafos Norma Negro", description: "Bolígrafos Norma Negro X12 unidades", stock: 28 },
-  { imgSrc: PlaneadorSem, name: "Planeador Semanal", description: "Planeador Semanal Kiut 2025", stock: 18 },
-  { imgSrc: Cuaderno7M, name: "Cuaderno 7M", description: "Cuaderno argollado tapa dura 7 materias", stock: 14 },
-  { imgSrc: Block, name: "Block Oficio", description: "Block oficio línea corriente Jean Book", stock: 40 },
-  { imgSrc: MarcadoBorr, name: "Marcadores Borrables", description: "Marcadores Borrables Norma X10 Negro", stock: 22 },
-  { imgSrc: FolderArgoll, name: "Folder Argollado", description: "Folder argollado PVC Académico Negro", stock: 15 },
-  { imgSrc: ColoresGig, name: "Caja de Colores Gigantes", description: "Colores Norma Gigantes Triangulares + Sacapunta", stock: 25 },
-];
+import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Request } from "../../api/requests";
 
 export default function Dashboard() {
+  //almacena los productos
+    const [producto, setProductos] = useState<InventoryCardProps[]>([]);
+    const [filteredProductos, setFilteredProductos] = useState<InventoryCardProps[]>([]); //almacena los productos filtrados
+    const [error, setError] = useState<string | null>(null);
+
+  //realiza la solicitud al cargar la pagina
+  //useEffect para obtener los productos desde la API
+  useEffect(() => {
+    const fetchProductos = async () => {
+      const request = new Request("http://localhost:5000", {});
+      try {
+        const response = await request.get("producto/ConsultarTodos");
+        console.log('Datos del servidor:', response?.data);
+        if (response?.data) {
+          setProductos(response.data);
+          setFilteredProductos(response.data); // Inicialmente mostramos todos los productos
+        } else {
+          throw new Error("No se pudieron obtener los datos de los productos");
+        }
+      } catch (err: any) {
+        setError(err.message);
+      }
+    };
+
+    fetchProductos();
+  }, []);
+
+  //Maneja la busqueda en tiempo real
+  const handleSearch = (query: string) => {
+    //el trim() elimina los espacios en blanco al principio y al final de la cadena
+    if(query.trim() === "") {// Si la búsqueda está vacía, mostramos todos los productos
+      setFilteredProductos(producto); 
+    }else {
+      // Filtramos los productos que coinciden con la búsqueda
+      const filtered = producto.filter((product) =>
+        product.nombre.toLowerCase().includes(query.toLowerCase())
+      );
+      setFilteredProductos(filtered);
+    }
+  };
+
   return (
     <div className="flex w-full h-screen">
       <Sidebar />
       <main className="flex-1 bg-white p-6">
-        <Header />
+        <Header onSearch={handleSearch}/>
         {/* Título */}
         <h1 className="text-3xl font-semibold text-purple-400 text-center mt-23">
           Inventario
         </h1>
         
+        {error && <p className="text-red-500 text-center mt-4">{error}</p>}
+
         {/* Contenedor de productos */}
         <div className="flex justify-center mt-10">
           {/* Grid para organizar las tarjetas */}
           <div className="flex flex-col gap-6 mt-8">
-            {/* Recorremos cada producto */}
-            {products.map((product, i) => (
-              <InventarioCard key={i} {...product} />
-            ))}
+            {filteredProductos.length > 0 ?(
+            filteredProductos.map((producto, i) => (
+              <InventoryCard
+                key={i}
+                imagen={producto.imagen}
+                nombre={producto.nombre}
+                descripcion={producto.descripcion}
+                stock={producto.stock}
+              /> 
+            ))
+            ) : (
+              <p className="text-gray-500 text-center">No se encontraron productos.</p> 
+            )}
           </div>
         </div>
 
         {/* Botón flotante de agregar */}
-        <button className="fixed bottom-8 right-8 bg-purple-400 hover:bg-purple-500 text-purple p-4 rounded-full shadow-lg">
+        <Link to="/Add">
+          <button className="fixed bottom-8 right-8 bg-cyan-300 hover:bg-cyan-500 text-cyan-800 p-4 rounded-full shadow-lg">
             <FaPlus size={24} />
-        </button>
+          </button>
+        </Link>
       </main>
     </div>
   );

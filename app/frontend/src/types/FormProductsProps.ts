@@ -1,12 +1,13 @@
 export interface ProductoFormValues {
-    codigo: string;
-    nombre: string;
-    cantidad: number;
-    fechaIngreso: string;
-    valorUnitario: number;
-    valorSinIVA: number;
-    valorCompra: number;
-    imagen: File | null;
+    CodigoProducto: string;
+    Nombre: string;
+    Descripcion: string;
+    VlrUnitario: number;
+    VlrSinIva: number;
+    VlrCompra: number;
+    Stock: number;
+    FechaIngreso: string;
+    imagen: string | null;
   }
   
   export interface FormularioProductoProps {

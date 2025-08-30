@@ -15,7 +15,7 @@ namespace app.backend.Controllers
         {
             _uploadService = new UploadImagenService();
         }
-        //http://localhost:5000/api/UploadProducto/subir/producto o Proveedor
+        //http://localhost:5000/api/Upload/subir/producto o Proveedor
         [HttpPost("subir/{tipo}")]
         public async Task<IActionResult> Subir(IFormFile archivo, string tipo)
         {

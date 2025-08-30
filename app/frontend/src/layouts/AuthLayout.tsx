@@ -1,10 +1,12 @@
 // react
 import { memo, useState, useEffect, Fragment } from 'react';
-import { useAppSelector } from "../hooks/useAppDispatch";
-import { ErrorBlock } from '../utils/components/global';
+import { useNavigate } from "react-router-dom";
+import { useAppSelector } from '../hooks/useAppDispatch';
 // styles, types
 import { AuthComponentPropsType } from '../types/compProps';
 import { tailwindStyles as TSCSS } from '../styles/styles.tailwind';
+import { decodeJwtPayload } from '../utils/encode';
+import Cookies from "js-cookie";
 // images
 import Logo from '../assets/icon-rmBg.png';
 import BButton from '../assets/back-button.svg';
@@ -12,11 +14,11 @@ import AuthImage from '../assets/auth-image.png';
 
 const AuthLayout = memo(
   ({ title, reference, children }: AuthComponentPropsType) => {
-    const [isLoginPage, setIsLoginPage] = useState<boolean>(false);
     const [isLargeScreen, setIsLargeScreen] = useState<boolean>(false);
     const [authImageSrc, setAuthImageSrc] = useState<string | null>(null);
 
     const auth = useAppSelector((state) => state.auth);
+    const navigate = useNavigate();
 
     useEffect(() => {
       const handleResize = () => {
@@ -30,11 +32,6 @@ const AuthLayout = memo(
         }
       };
 
-      const page = window.location.pathname.split('/').pop();
-      if (page === 'login') {
-        setIsLoginPage(true);
-      }
-
       // Initial check
       handleResize();
 
@@ -45,26 +42,33 @@ const AuthLayout = memo(
       return () => window.removeEventListener('resize', handleResize);
     }, []);
 
+    if (auth.isAuthenticated) {
+      const email = decodeJwtPayload(Cookies.get("token")).unique_name
+
+      children = <p className='my-4 text-xl'>Actualmente te encuentras autenticado en <br/> la aplicación con el correo: "{email}".</p>
+
+      setTimeout(() => {
+        navigate('/')
+      }, 3000);
+    }
+
     const backButtonEvent = () => {
       return history.back();
     };
 
     return (
       <Fragment>
-        {!isLoginPage && (
+        {reference.trim().toLocaleLowerCase() !== 'login' && (
           <button
-            className="absolute back-button m-2.5 w-[45px] h-[45px] flex justify-start items-center pt-3 cursor-pointer"
+            className="absolute back-button top-0 left-0 m-2.5 w-[45px] h-[45px] flex justify-start items-center pt-3 cursor-pointer"
             onClick={backButtonEvent}
           >
             <img src={BButton} alt="back-button" />
           </button>
         )}
-        {auth.serverError && (
-          <ErrorBlock errorMessage="¡Credenciales no válidas!" />
-        )}
 
         <div
-          className={`${TSCSS.gridCenter} md:grid-cols-2 h-[100vh] w-full overflow-hidden`}
+          className={`${TSCSS.gridCenter} h-full md:grid-cols-2 w-full overflow-hidden`}
         >
           <div
             className={
