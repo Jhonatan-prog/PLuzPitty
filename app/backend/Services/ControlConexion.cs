@@ -210,6 +210,7 @@ public void AbrirBd()
                 {
                     "SqlServer" => new SqlParameter(name, value ?? DBNull.Value), // Crea un parámetro para SQL Server.
                     "LocalDb" => new SqlParameter(name, value ?? DBNull.Value), // Crea un parámetro para LocalDB.
+                    "MySql" => new SqlParameter(name, value ?? DBNull.Value), //Crea un parametro para MySql 
                     _ => throw new InvalidOperationException("Unsupported database provider. Only LocalDb and SqlServer are supported."),
                 };
             }
