@@ -25,7 +25,7 @@ const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(false);//Estado de inicio de la barra lateral cuando abrimos la página, si está true, aparece abierta, false, aparece cerrada
 
   const auth = new Auth(undefined);
-
+ 
   return (
     <div className={`fixed bg-[#e5dff3] h-full p-4 border-r-2 border-purple-700 ${isOpen ? "w-64" : "w-18"} top-0 left-0 z-60 transition-all duration-300`}>
       {/* Solo mostramos esta parte si la barra está abierta */}
@@ -33,8 +33,8 @@ const Sidebar = () => {
         <img src={perfil} alt="Perfil" className="w-25 h-28 rounded-full z-20" />
         <div className={"relative transition-all duration-300 " + (isOpen ? "right-0" : "right-20")}>
           <p className="text-xm text-gray-500">Perfil</p>
-          <p className="font-bold text-purple-800 text-sm">Yuliana Andrea</p>
-          <p className="text-xm">Administradora</p>
+          <p className="font-bold text-purple-800 text-sm">{}</p>
+          <p className="text-xm">{}</p>
         </div>
       </div>
 

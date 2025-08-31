@@ -3,6 +3,7 @@ import { logout as authLogout } from "../features/auth/authSlice";
 import { useAppDispatch } from "../hooks/useAppDispatch";
 import { Request } from "./requests";
 import Cookies from "js-cookie";
+import { decodeJwtPayload } from "../utils/encode";
 
 // Esta función maneja la autenticación de los usuarios, incluyendo el inicio de sesión, cierre de sesión y verificación del estado de autenticación.
 // Utiliza cookies para almacenar el token de acceso y Redux para manejar el estado de autenticación en la aplicación.

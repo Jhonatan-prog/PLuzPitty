@@ -17,6 +17,13 @@ class RTimeValidation implements IRTimeValidation {
         return this.regex.test(email);
     }
 
+    public telefono(telefono: unknown) {
+        const digits = String(telefono ?? '').replace(/\D/g, '');  
+        this.regex =/^\d{10}$/;
+        return this.regex.test(digits);
+
+    }
+
     public password(password: string) {
         const pass = password;
 
@@ -51,6 +58,7 @@ class RTimeValidation implements IRTimeValidation {
         } = {
             name: this.name(value as string),
             email: this.email(value as string),
+            telefono: this.telefono(value as string),
             password: this.password(value as string),
             passwordConfirmation: this.passwordConfirmation(value[0], value[1]),
         }

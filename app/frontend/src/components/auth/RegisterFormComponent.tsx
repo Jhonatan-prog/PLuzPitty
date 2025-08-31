@@ -7,7 +7,7 @@ import { Request } from "../../api/requests";
 import Alert from "../Alertas/Alert";
 // styles / types
 import { tailwindStyles as TSCSS} from "../../styles/styles.tailwind";
-import { LabelProps } from "../../types/compProps";
+import { LabelProps } from '../../types/compProps';
 import { IT } from '../../types/validation/inputs';
 import { useNavigate } from "react-router-dom";
 
@@ -36,6 +36,7 @@ const RegisterFormComponent = () => {
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [telefono, setTelefono] = useState("");
   const [password, setPassword] = useState("");
   const [passwordConfirmation, setPasswordConfirmation] = useState("");
   const [alerta, setAlerta] = useState<{ 
@@ -47,7 +48,7 @@ const RegisterFormComponent = () => {
     NombreUsuario: name,
     Contraseña: password,
     Correo: email,
-    Telefono: "3113788092",
+    Telefono: telefono,
     NombreRol: "EMPLEADO"
   });
 
@@ -56,6 +57,7 @@ const RegisterFormComponent = () => {
   const [validData, setValidData] = useState({
     name: false,
     email: false,
+    telefono: false,
     password: false,
     passwordConfirmation: false,
   });
@@ -200,6 +202,44 @@ const RegisterFormComponent = () => {
               userInput={email}
             />
 
+        </div>
+          
+        <div className="relative">
+          <input 
+          type="tel" 
+          name="telefono"
+          inputMode="numeric"
+          maxLength={10}
+          className={`${styles.input} ${(validData.telefono || telefono === "") ? '' : invalidInput}`}
+          placeholder="Telefono"
+          value={telefono}
+          onChange={(e) => {
+              const raw = e.target.value as string;
+              const digits = raw.replace(/\D/g, ''); // Elimina cualquier caracter que no sea dígito
+              setTelefono(digits); // Actualiza el estado con solo dígitos
+              const value = e.target.value as string;
+              const updatedValidData = {
+                ...validData, 
+                telefono: RTV.validationHandler("telefono", digits) as boolean
+              }
+              const validForm = RTV.validationComplete(updatedValidData);
+
+              setTelefono(value);
+              setValidData(updatedValidData)
+
+              if (validForm) {
+                setValidationComplete(true);
+              } else {
+                setValidationComplete(false);
+              }
+            }}
+            id={uuidv4()} />
+            <Label
+              reference="telefono"
+              message="El numero ingresado no es valido"
+              isValid={validData.telefono}
+              userInput={telefono}
+            />
         </div>
 
         <div className="relative">
